@@ -1,0 +1,34 @@
+<?xml version="1.0" encoding="utf-8"?>
+<edmx:Edmx Version="3.0" xmlns:edmx="http://schemas.microsoft.com/ado/2009/11/edmx">
+ <!-- EF Designer content (DO NOT EDIT MANUALLY BELOW HERE) -->
+  <edmx:Designer xmlns="http://schemas.microsoft.com/ado/2009/11/edmx">
+    <!-- Diagram content (shape and connector positions) -->
+    <edmx:Diagrams>
+      <Diagram DiagramId="240ef5da2d3f4be1b7596243ddba99d4" Name="Diagram1">
+        <EntityTypeShape EntityType="QL_SanPhamModel.tblChiTietHoaDon" Width="1.5" PointX="10.5" PointY="3.375" />
+        <EntityTypeShape EntityType="QL_SanPhamModel.tblDanhMucCon" Width="1.5" PointX="6" PointY="11.5" />
+        <EntityTypeShape EntityType="QL_SanPhamModel.tblHinhAnh" Width="1.5" PointX="10.5" PointY="11.625" />
+        <EntityTypeShape EntityType="QL_SanPhamModel.tblHoaDon" Width="1.5" PointX="5.25" PointY="2.75" />
+        <EntityTypeShape EntityType="QL_SanPhamModel.tblKhachHang" Width="1.5" PointX="3" PointY="7.125" />
+        <EntityTypeShape EntityType="QL_SanPhamModel.tblLoaiSP" Width="1.5" PointX="3.75" PointY="11.625" />
+        <EntityTypeShape EntityType="QL_SanPhamModel.tblNhanVien" Width="1.5" PointX="3" PointY="3.25" />
+        <EntityTypeShape EntityType="QL_SanPhamModel.tblSanPham" Width="1.5" PointX="8.25" PointY="11.125" />
+        <EntityTypeShape EntityType="QL_SanPhamModel.tbltaikhoan" Width="1.5" PointX="8.25" PointY="3.25" />
+        <EntityTypeShape EntityType="QL_SanPhamModel.tblTinhTrang" Width="1.5" PointX="3" PointY="0.875" />
+        <EntityTypeShape EntityType="QL_SanPhamModel.tblVaiTro" Width="1.5" PointX="0.75" PointY="3.5" />
+        <AssociationConnector Association="QL_SanPhamModel.FK__tblChiTiet__MaHD__1AD3FDA4" />
+        <AssociationConnector Association="QL_SanPhamModel.FK__tblChiTiet__MaSP__1BC821DD" />
+        <AssociationConnector Association="QL_SanPhamModel.FK__tblDanhMu__MaLoa__04E4BC85" />
+        <AssociationConnector Association="QL_SanPhamModel.FK__tblSanPham__MaDM__07C12930" />
+        <AssociationConnector Association="QL_SanPhamModel.FK__tblHinhAnh__MaSP__0A9D95DB" />
+        <AssociationConnector Association="QL_SanPhamModel.FK__tblHoaDon__MaKH__160F4887" />
+        <AssociationConnector Association="QL_SanPhamModel.FK__tblHoaDon__MaNV__17036CC0" />
+        <AssociationConnector Association="QL_SanPhamModel.FK__tblHoaDon__TinhT__17F790F9" />
+        <AssociationConnector Association="QL_SanPhamModel.FK__tbltaikhoa__makh__1F98B2C1" />
+        <AssociationConnector Association="QL_SanPhamModel.FK__tblNhanVi__VaiTr__114A936A" />
+        <AssociationConnector Association="QL_SanPhamModel.FK__tbltaikhoa__manv__1EA48E88" />
+        <AssociationConnector Association="QL_SanPhamModel.FK__tbltaikho__mavai__208CD6FA" />
+      </Diagram>
+    </edmx:Diagrams>
+  </edmx:Designer>
+</edmx:Edmx>

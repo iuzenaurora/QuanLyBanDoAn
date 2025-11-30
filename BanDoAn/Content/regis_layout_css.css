@@ -1,0 +1,158 @@
+﻿:root {
+    /* Màu chủ đạo giống trang Login */
+    --primary-theme: #d65a68;
+    --dark-overlay: rgba(50, 20, 30, 0.7);
+    --text-dark: #ee5253;
+    --input-bg: #fffbf7;
+}
+
+body {
+    font-family: 'Nunito', sans-serif;
+    min-height: 100vh;
+    /* Hình nền chung cho cả trang */
+    background: linear-gradient(var(--dark-overlay), var(--dark-overlay)), url('/Content/images/register.jpg');
+    background-size: cover;
+    background-position: center;
+    background-attachment: fixed;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 2rem 1rem;
+    }
+
+.register-card {
+    background-color: #fff;
+    border-radius: 20px;
+    box-shadow: 0 15px 35px rgba(0,0,0,0.2);
+    width: 100%;
+    max-width: 600px; /* Độ rộng vừa phải cho form đăng ký */
+    overflow: hidden;
+    position: relative;
+}
+
+.card-header-custom {
+    background-color: #fffbf7;
+    padding: 2rem 2rem 1rem;
+    text-align: center;
+    border-bottom: 1px solid #eee;
+}
+
+.brand-text {
+    font-family: 'Playfair Display', serif;
+    color: var(--primary-theme);
+    font-size: 2rem;
+    font-weight: 700;
+    margin-bottom: 0.5rem;
+}
+
+.brand-text span {
+    color: #e0b0b6;
+    font-size: 1rem;
+    font-weight: 400;
+    margin-left: 5px;
+    text-transform: uppercase;
+    letter-spacing: 2px;
+}
+
+.form-title {
+    font-weight: 700;
+    color: #333;
+    font-size: 1.5rem;
+    margin-top: 10px;
+}
+
+.card-body-custom {
+    padding: 2rem;
+}
+
+/* Style cho input giống trang Login */
+.form-floating > .form-control {
+    border: none;
+    border-bottom: 2px solid #eee;
+    border-radius: 0;
+    background: transparent;
+    box-shadow: none !important;
+}
+
+.form-floating > .form-control:focus {
+    border-bottom-color: var(--primary-theme);
+}
+
+.form-floating > label {
+    color: #999;
+    font-size: 0.9rem;
+}
+
+.form-floating > .form-control:focus ~ label,
+.form-floating > .form-control:not(:placeholder-shown) ~ label {
+    color: var(--primary-theme);
+    font-weight: 700;
+    opacity: 0.8;
+}
+
+.btn-register {
+    background-color: var(--primary-theme);
+    color: white;
+    width: 49%;
+    padding: 12px;
+    border-radius: 50px;
+    font-weight: 700;
+    font-size: 1.1rem;
+    margin-top: 20px;
+    transition: 0.3s;
+    border: none;
+}
+
+.btn-register:hover {
+    background-color: #c04553;
+    transform: translateY(-2px);
+    box-shadow: 0 5px 15px rgba(214, 90, 104, 0.4);
+}
+
+.login-link {
+    color: var(--primary-theme);
+    font-weight: 700;
+    text-decoration: none;
+}
+
+.login-link:hover {
+    text-decoration: underline;
+}
+
+.btn-index {
+    background-color: #e0b0b6;
+    color: #333;
+    width: 49%;
+    padding: 12px;
+    border-radius: 50px;
+    font-weight: 700;
+    font-size: 1.1rem;
+    margin-top: 20px;
+    transition: 0.3s;
+    border: none;
+    border: none;
+}
+
+.btn-index:hover {
+    background-color: #ffd4d4a6;
+    transform: translateY(-2px);
+    box-shadow: 0 5px 15px rgba(214, 90, 104, 0.4);
+}
+
+/* Custom Scrollbar cho body nếu form quá dài */
+::-webkit-scrollbar {
+    width: 8px;
+}
+
+::-webkit-scrollbar-track {
+    background: #f1f1f1;
+}
+
+::-webkit-scrollbar-thumb {
+    background: #ccc;
+    border-radius: 4px;
+}
+
+::-webkit-scrollbar-thumb:hover {
+    background: #aaa;
+}

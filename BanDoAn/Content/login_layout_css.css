@@ -1,0 +1,184 @@
+﻿:root {
+    --primary-gold: #ff6b6b; /* Màu vàng kim loại giống trong ảnh */
+    --dark-overlay: rgba(50, 20, 30, 0.7); /* Lớp phủ tối màu xanh đen */
+    --text-dark: #ee5253;
+}
+
+body {
+    font-family: 'Nunito', sans-serif;
+    height: 100vh;
+    overflow: hidden; /* Ẩn thanh cuộn cho trải nghiệm full màn hình */
+}
+
+/* --- LAYOUT CHIA ĐÔI --- */
+.split-layout {
+    height: 100vh;
+    display: flex;
+    flex-wrap: wrap;
+}
+
+/* --- CỘT TRÁI (HÌNH ẢNH & THÔNG TIN) --- */
+.left-side {
+    background: linear-gradient(var(--dark-overlay), var(--dark-overlay)), url('/Content/images/login.jpg');
+    background-size: cover;
+    background-position: center;
+    color: white;
+    position: relative;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    padding: 3rem; /* Padding rộng như ảnh mẫu */
+}
+
+/* Typography cho bên trái */
+.brand-text {
+    font-family: 'Playfair Display', serif;
+    color: var(--primary-gold);
+    font-size: 2.5rem;
+    font-weight: 700;
+    margin-bottom: 2rem;
+    letter-spacing: 1px;
+}
+
+.brand-text span {
+    color: #888; /* Chữ Bistro nhạt hơn */
+    font-size: 1.2rem;
+    font-weight: 400;
+    margin-left: 5px;
+    text-transform: uppercase;
+    letter-spacing: 3px;
+}
+
+.quote-text {
+    font-family: 'Playfair Display', serif;
+    font-size: 3.5rem;
+    font-style: italic;
+    line-height: 1.2;
+    margin-bottom: 2rem;
+}
+
+.btn-outline-gold {
+    border: 1px solid white;
+    color: white;
+    padding: 10px 30px;
+    border-radius: 50px;
+    text-decoration: none;
+    transition: 0.3s;
+    display: inline-block;
+    margin-bottom: 3rem;
+}
+
+.btn-outline-gold:hover {
+    background: white;
+    color: #333;
+}
+
+.info-box {
+    margin-top: auto; /* Đẩy xuống đáy */
+    border-left: 3px solid var(--primary-gold);
+    padding-left: 15px;
+}
+
+.info-text {
+    font-size: 0.9rem;
+    opacity: 0.8;
+    margin-bottom: 5px;
+}
+
+.info-highlight {
+    color: var(--primary-gold);
+    font-weight: bold;
+}
+
+/* --- CỘT PHẢI (FORM ĐĂNG NHẬP) --- */
+.right-side {
+    background-color: #fff2f2; /* Màu kem rất nhạt cho nền sạch sẽ */
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 2rem;
+}
+
+.login-wrapper {
+    width: 100%;
+    max-width: 400px;
+}
+
+.login-header h2 {
+    font-family: 'Playfair Display', serif;
+    font-weight: 700;
+    color: #333;
+    margin-bottom: 0.5rem;
+}
+
+.form-control {
+    border: none;
+    border-bottom: 2px solid #eee;
+    border-radius: 0;
+    padding: 10px 0;
+    background: transparent;
+    box-shadow: none !important; /* Bỏ outline xanh của bootstrap */
+    transition: 0.3s;
+}
+
+.form-control:focus {
+    border-bottom-color: var(--primary-gold);
+}
+
+.btn-login {
+    background-color: #ffff;
+    color: #333;
+    width: 100%;
+    padding: 12px;
+    border-radius: 50px;
+    font-weight: 700;
+    margin-top: 20px;
+    transition: 0.3s;
+    border: none;
+    box-shadow: 1px 2px;
+}
+
+.btn-login:hover {
+    background-color: var(--primary-gold);
+    color: white;
+    transform: translateY(-2px);
+    box-shadow: 0 5px 15px rgba(197, 160, 89, 0.4);
+}
+
+.forgot-pass {
+    font-size: 0.85rem;
+    color: #888;
+    text-decoration: none;
+}
+
+.register-link {
+    color: var(--primary-gold);
+    font-weight: 700;
+    text-decoration: none;
+}
+
+/* --- RESPONSIVE --- */
+@media (max-width: 768px) {
+    body {
+        overflow: auto;
+    }
+
+    .split-layout {
+        height: auto;
+        flex-direction: column;
+    }
+
+    .left-side {
+        min-height: 300px;
+        padding: 2rem;
+    }
+
+    .quote-text {
+        font-size: 2rem;
+    }
+
+    .right-side {
+        padding: 3rem 1.5rem;
+        min-height: 500px;
+    }
+}

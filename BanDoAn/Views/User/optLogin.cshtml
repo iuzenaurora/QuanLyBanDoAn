@@ -1,0 +1,23 @@
+﻿<div class="modal fade" id="authOptionModal" tabindex="-1">
+    <div class="modal-dialog modal-dialog-centered modal-sm">
+        <div class="modal-content border-0 shadow-lg rounded-4 overflow-hidden text-center">
+            <div class="modal-header border-0 pb-0 justify-content-end">
+                <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+            </div>
+            <div class="modal-body p-4 pt-0">
+                <h4 class="fw-bold text-danger mb-2">FoodStore Member</h4>
+                <img src="@Url.Content("~/Content/images/optlogin.jpg")" class="mascot-img" alt="Mascot">
+                <p class="text-muted small mb-4">Vui lòng đăng nhập tài khoản FoodStore để xem ưu đãi và thanh toán dễ dàng hơn.</p>
+
+                <div class="row g-2">
+                    <div class="col-6">
+                        <a href="@Url.Action("Register", "User")" class="btn w-100 auth-option-btn register-btn">Đăng ký</a>
+                    </div>
+                    <div class="col-6">
+                        <a href="@Url.Action("Login", "User")" class="btn w-100 auth-option-btn login-btn">Đăng nhập</a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>

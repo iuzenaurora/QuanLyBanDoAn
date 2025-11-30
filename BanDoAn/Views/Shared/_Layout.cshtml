@@ -1,0 +1,760 @@
+﻿<!DOCTYPE html>
+<html lang="vi">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>FoodStore - Ứng dụng đặt món</title>
+    <!-- Bootstrap 5 CSS -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <!-- Font Awesome Icons -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <!-- Google Fonts -->
+    <link href="https://fonts.googleapis.com/css2?family=Nunito:wght@400;600;700;800&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --primary-color: #ff6b6b;
+            --primary-hover: #ee5253;
+            --secondary-color: #fff2f2;
+            --text-dark: #2d3436;
+            --price-color: #d63031;
+            --bg-light: #f8f9fa;
+            --success-color: #2ecc71;
+        }
+
+        body {
+            font-family: 'Nunito', sans-serif;
+            background-color: var(--bg-light);
+            overflow-x: hidden;
+            -webkit-tap-highlight-color: transparent;
+        }
+
+        /* --- Navbar Styles --- */
+        .navbar {
+            background-color: #fff;
+            box-shadow: 0 2px 15px rgba(0,0,0,0.05);
+            padding: 12px 0;
+        }
+
+        .navbar-brand {
+            font-weight: 800;
+            color: var(--primary-color) !important;
+            font-size: 1.6rem;
+            letter-spacing: -0.5px;
+        }
+
+        .nav-link {
+            font-weight: 700;
+            color: var(--text-dark);
+            font-size: 0.95rem;
+            margin: 0 5px;
+            transition: 0.3s;
+        }
+
+        .nav-link:hover, .nav-link.active {
+            color: var(--primary-color);
+        }
+
+        /* --- SEARCH BOX FIXED --- */
+        .search-box {
+            position: relative;
+            background: #f1f2f6;
+            border-radius: 40px;
+            padding: 5px;
+            display: flex;
+            align-items: center;
+            transition: 0.4s;
+            margin-right: 5px;
+        }
+
+        .search-box:hover, .search-box:focus-within {
+            background: #fff;
+            box-shadow: 0 4px 10px rgba(0,0,0,0.1);
+        }
+
+        .search-txt {
+            border: none;
+            background: none;
+            outline: none;
+            padding: 0;
+            color: var(--text-dark);
+            font-size: 0.9rem;
+            transition: 0.4s;
+            width: 0px; /* Hidden by default */
+            font-weight: 600;
+        }
+        /* Expand on Hover/Focus */
+        .search-box:hover > .search-txt,
+        .search-box:focus-within > .search-txt {
+            width: 180px;
+            padding: 0 10px;
+        }
+
+        .search-btn {
+            color: var(--text-dark);
+            width: 30px;
+            height: 30px;
+            border-radius: 50%;
+            background: transparent;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            text-decoration: none;
+            transition: 0.4s;
+            cursor: pointer;
+        }
+
+        .search-box:hover > .search-btn {
+            background: var(--primary-color);
+            color: white;
+        }
+
+        /* --- SEARCH RESULTS DROPDOWN --- */
+        .search-results-dropdown {
+            position: absolute;
+            top: 120%; /* Push down a bit */
+            right: 0;
+            width: 300px;
+            background: white;
+            border-radius: 15px;
+            box-shadow: 0 10px 40px rgba(0,0,0,0.15);
+            z-index: 1050; /* Higher than other elements */
+            display: none;
+            max-height: 400px;
+            overflow-y: auto;
+            border: 1px solid #eee;
+        }
+
+        .search-result-item {
+            display: flex;
+            align-items: center;
+            padding: 10px 15px;
+            border-bottom: 1px solid #f5f5f5;
+            cursor: pointer;
+            transition: 0.2s;
+        }
+
+        .search-result-item:hover {
+            background-color: var(--secondary-color);
+        }
+
+        .search-result-item:last-child {
+            border-bottom: none;
+        }
+
+        /* --- RESPONSIVE FIXES FOR SEARCH --- */
+        @@media (max-width: 576px) {
+            .navbar-brand {
+                font-size: 1.3rem;
+            }
+            /* Adjust search input width on mobile to not break layout */
+            .search-box:hover > .search-txt,
+            .search-box:focus-within > .search-txt {
+                width: 120px; /* Smaller width on mobile */
+            }
+            /* Fix Dropdown on Mobile: Make it fixed full width */
+            .search-results-dropdown {
+                position: fixed;
+                top: 70px;
+                left: 10px;
+                right: 10px;
+                width: auto;
+                box-shadow: 0 5px 100vh rgba(0,0,0,0.3); /* Dim background effect */
+            }
+        }
+
+        /* ---- SUBMENU --- */
+        .dropdown-submenu {
+            position: relative;
+        }
+
+        .dropdown-submenu > .dropdown-menu {
+            top: 0;
+            left: 100%;
+            margin-top: -1px;
+            display: none;
+        }
+
+        .dropdown-submenu:hover > .dropdown-menu {
+            display: block;
+        }
+
+        /* Mũi tên chỉ submenu */
+        .dropdown-submenu > a::after {
+            content: "▶";
+            float: right;
+            margin-top: 5px;
+            font-size: 12px;
+        }
+
+        /* --- Header Icons (Cart & Login) --- */
+        .btn-icon-nav {
+            position: relative;
+            color: var(--text-dark);
+            padding: 8px 12px;
+            transition: 0.3s;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .btn-icon-nav:hover {
+            color: var(--primary-color);
+            transform: scale(1.1);
+        }
+
+        .badge-cart {
+            position: absolute;
+            top: 2px;
+            right: 2px;
+            background-color: var(--primary-color);
+            font-size: 0.7rem;
+            border: 2px solid white;
+            padding: 0.35em 0.5em;
+        }
+
+        /* --- Hero Section --- */
+        .hero-section {
+            background-color: var(--secondary-color);
+            padding: 60px 0 80px;
+            border-radius: 0 0 50px 50px;
+            margin-bottom: 50px;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .hero-title {
+            font-weight: 800;
+            color: var(--text-dark);
+            font-size: 3rem;
+            line-height: 1.2;
+        }
+
+        .hero-img-wrap {
+            position: relative;
+            z-index: 1;
+            transition: transform 0.5s;
+        }
+
+        .hero-img-wrap:hover {
+            transform: translateY(-10px);
+        }
+
+        .hero-img-wrap img {
+            border-radius: 30px;
+            box-shadow: 0 20px 50px rgba(255, 107, 107, 0.2);
+            width: 100%;
+            object-fit: cover;
+            aspect-ratio: 4/3;
+        }
+
+        /* Mobile Hero */
+        @@media (max-width: 768px) {
+            .hero-section {
+                padding: 30px 0 50px;
+                border-radius: 0 0 30px 30px;
+                text-align: center;
+            }
+
+            .hero-title {
+                font-size: 2rem;
+                margin-bottom: 15px;
+            }
+
+            .hero-btns {
+                justify-content: center;
+            }
+        }
+
+        /* --- Product Card --- */
+        .product-card {
+            border: none;
+            border-radius: 20px;
+            background: white;
+            transition: all 0.3s cubic-bezier(0.25, 0.8, 0.25, 1);
+            height: 100%;
+            box-shadow: 0 5px 15px rgba(0,0,0,0.03);
+            overflow: hidden;
+            position: relative;
+        }
+
+        .product-card:hover {
+            transform: translateY(-8px);
+            box-shadow: 0 15px 35px rgba(0,0,0,0.08);
+        }
+
+        .product-img-container {
+            height: 180px;
+            overflow: hidden;
+            position: relative;
+            background: #f1f2f6;
+        }
+
+        .product-img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            transition: transform 0.5s;
+        }
+
+        .product-card:hover .product-img {
+            transform: scale(1.1);
+        }
+
+        /* Category Badge on Image */
+        .card-badge {
+            position: absolute;
+            top: 10px;
+            left: 10px;
+            background: rgba(255, 255, 255, 0.9);
+            backdrop-filter: blur(5px);
+            padding: 4px 10px;
+            border-radius: 20px;
+            font-size: 0.7rem;
+            font-weight: 700;
+            color: var(--text-dark);
+            box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+        }
+
+        .card-body {
+            padding: 1.2rem;
+            display: flex;
+            flex-direction: column;
+        }
+
+        .product-title {
+            font-weight: 700;
+            font-size: 1.1rem;
+            margin-bottom: 0.2rem;
+            color: var(--text-dark);
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+        }
+
+        .product-sub {
+            font-size: 0.85rem;
+            color: #95a5a6;
+            margin-bottom: 10px;
+        }
+
+        .price-row {
+            margin-top: auto;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .product-price {
+            color: var(--price-color);
+            font-weight: 800;
+            font-size: 1.2rem;
+        }
+
+        .btn-add {
+            background-color: var(--secondary-color);
+            color: var(--primary-color);
+            border: none;
+            border-radius: 12px;
+            width: 38px;
+            height: 38px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: 0.3s;
+            cursor: pointer;
+        }
+
+        .btn-add:hover {
+            background-color: var(--primary-color);
+            color: white;
+            transform: rotate(90deg);
+        }
+
+        .btn-add:active {
+            transform: scale(0.9);
+        }
+
+        /* Responsive Grid Adjustments */
+        @@media (max-width: 576px) {
+            .product-img-container {
+                height: 140px;
+            }
+
+            .card-body {
+                padding: 0.8rem;
+            }
+
+            .product-title {
+                font-size: 1rem;
+            }
+
+            .product-price {
+                font-size: 1rem;
+            }
+
+            .btn-add {
+                width: 32px;
+                height: 32px;
+            }
+        }
+
+
+        @@keyframes fadeIn {
+            from {
+                opacity: 0;
+                transform: translateY(20px);
+            }
+
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        /* --- Tabs --- */
+        .nav-pills {
+            gap: 10px;
+            margin-bottom: 30px;
+        }
+
+        .nav-pills .nav-link {
+            border-radius: 25px;
+            padding: 8px 20px;
+            background: white;
+            border: 1px solid transparent;
+            color: #636e72;
+            font-weight: 600;
+            box-shadow: 0 2px 5px rgba(0,0,0,0.05);
+        }
+
+        .nav-pills .nav-link.active {
+            background-color: var(--primary-color);
+            color: white;
+            box-shadow: 0 5px 15px rgba(255, 107, 107, 0.4);
+        }
+
+        .nav-pills .nav-link:hover:not(.active) {
+            background-color: #f1f2f6;
+        }
+
+        /* Mobile Tabs Scroller */
+        @@media (max-width: 768px) {
+            .nav-pills {
+                flex-wrap: nowrap;
+                overflow-x: auto;
+                padding-bottom: 10px;
+                white-space: nowrap;
+                -webkit-overflow-scrolling: touch;
+            }
+        }
+
+        @@keyframes pulse-green {
+            0% {
+                transform: scale(0.95);
+                box-shadow: 0 0 0 0 rgba(46, 204, 113, 0.7);
+            }
+
+            70% {
+                transform: scale(1);
+                box-shadow: 0 0 0 20px rgba(46, 204, 113, 0);
+            }
+
+            100% {
+                transform: scale(0.95);
+                box-shadow: 0 0 0 0 rgba(46, 204, 113, 0);
+            }
+        }
+
+        @@keyframes scale-up {
+            0% {
+                transform: scale(0);
+                opacity: 0;
+            }
+
+            100% {
+                transform: scale(1);
+                opacity: 1;
+            }
+        }
+
+        /* --- AUTH SELECTION MODAL --- */
+        .auth-option-btn {
+            border-radius: 12px;
+            padding: 15px;
+            font-weight: 700;
+            transition: 0.3s;
+            border: 2px solid transparent;
+        }
+
+        .auth-option-btn.login-btn {
+            background-color: var(--primary-color);
+            color: white;
+        }
+
+        .auth-option-btn.login-btn:hover {
+            background-color: var(--primary-hover);
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(255, 107, 107, 0.3);
+        }
+
+        .auth-option-btn.register-btn {
+            background-color: white;
+            color: var(--primary-color);
+            border-color: var(--primary-color);
+        }
+
+        .auth-option-btn.register-btn:hover {
+            background-color: var(--secondary-color);
+            transform: translateY(-2px);
+        }
+
+        .mascot-img {
+            width: 100px;
+            margin-bottom: 15px;
+        }
+
+        #admin-panel {
+            background: white;
+            border-radius: 20px;
+            padding: 30px;
+            margin-bottom: 40px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.05);
+            border-left: 5px solid var(--primary-color);
+            animation: fadeIn 0.5s;
+        }
+
+        @@keyframes fadeIn {
+            from {
+                opacity: 0;
+                transform: translateY(20px);
+            }
+
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        /* --- SUCCESS ANIMATION STYLES --- */
+        .success-checkmark-container {
+            width: 80px;
+            height: 80px;
+            background-color: var(--success-color);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin: 0 auto 20px;
+            box-shadow: 0 0 0 0 rgba(46, 204, 113, 0.7);
+            animation: pulse-green 1.5s infinite;
+        }
+
+        .success-checkmark-icon {
+            color: white;
+            font-size: 40px;
+            animation: scale-up 0.5s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+        }
+    </style>
+</head>
+
+<!--Xử lý logic-->
+@{
+    var user = Session["User"] as BanDoAn.tbltaikhoan;
+
+    string tenkh = "";
+
+    if (user != null && user.tblKhachHang != null && !string.IsNullOrEmpty(user.tblKhachHang.TenKH))
+    {
+        string tenDayDu = user.tblKhachHang.TenKH;
+        int index = tenDayDu.LastIndexOf(' ');
+        tenkh = (index == -1) ? tenDayDu : tenDayDu.Substring(index + 1);
+    }
+}
+
+<body>
+
+    <!-- Navbar -->
+    <nav class="navbar navbar-expand-lg sticky-top">
+        <div class="container">
+            <a class="navbar-brand" href="@Url.Action("Index", "Home")"><i class="fas fa-burger me-2"></i>FoodStore</a>
+
+            <div class="d-flex align-items-center order-lg-3 gap-1">
+                <!-- Search -->
+                <!-- HOVER SEARCH BOX -->
+                @using (Html.BeginForm("Timkiem", "Home", FormMethod.Get, new { @class = "search-box" }))
+                {
+                    <input type="text" class="search-txt" id="hoverSearchInput" placeholder="Tìm món..." autocomplete="off" name="keyword" value="@ViewBag.keyword">
+                    <button class="search-btn border-0" type="submit">
+                        <i class="fas fa-search"></i>
+                    </button>
+                }
+
+                <!-- Cart Icon -->
+                <a class="btn-icon-nav me-1" data-bs-toggle="modal" data-bs-target="#cartModal" title="Giỏ hàng">
+                    <i class="fas fa-bag-shopping fa-lg"></i>
+                    <span id="cart-count" class="badge rounded-pill badge-cart">
+                        @(Session["Cart"] != null ? (((BanDoAn.Models.Cart)Session["Cart"]).soLuongMH()) : 0)
+                    </span>
+                </a>
+
+                @if (Session["User"] == null)
+                {
+                    <!-- Desktop Auth Section -->
+                    <div class="d-lg-block" id="desktop-auth-section">
+                        <a href="#" class="btn-icon-nav" data-bs-toggle="modal" data-bs-target="#authOptionModal">
+                            <i class="fas fa-user fa-lg"></i>
+                        </a>
+                    </div>
+                }
+                else
+                {
+                    <div class="dropdown">
+                        <a href="#" class="d-flex align-items-center text-decoration-none dropdown-toggle text-dark p-2 rounded-pill bg-white shadow-sm border" data-bs-toggle="dropdown">
+                            @if (user.makh != null)
+                            {
+                                <img src="https://ui-avatars.com/api/?name=@user.tblKhachHang.TenKH&background=ff6b6b&color=fff&size=32" class="rounded-circle me-2" width="32" height="32">
+                                <span class="fw-bold me-2 small text-truncate" style="max-width: 80px;">@tenkh</span>
+                            }
+                            else
+                            {
+                                <img src="https://ui-avatars.com/api/?name=@user.username&background=ff6b6b&color=fff&size=32" class="rounded-circle me-2" width="32" height="32">
+                                <span class="fw-bold me-2 small text-truncate" style="max-width: 80px;">@user.username</span>
+                            }
+                        </a>
+                        <ul class="dropdown-menu dropdown-menu-end border-0 shadow mt-2 rounded-4 overflow-hidden">
+                            <li class="bg-light p-2 text-center"><small class="text-muted fw-bold text-uppercase">@user.tblVaiTro.TenVaiTro</small></li>
+                            <li><hr class="dropdown-divider my-0"></li>
+                            <li><a class="dropdown-item py-2" href="@Url.Action("Logout", "User")"><i class="fas fa-sign-out-alt me-2 text-danger"></i>Đăng xuất</a></li>
+                        </ul>
+                    </div>
+                }
+
+
+                <!-- Toggler -->
+                <button class="navbar-toggler border-0 p-0 ms-2" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav">
+                    <span class="navbar-toggler-icon"></span>
+                </button>
+            </div>
+
+            <div class="collapse navbar-collapse order-lg-2" id="navbarNav">
+                <ul class="navbar-nav mx-auto align-items-center mt-3 mt-lg-0">
+                    <li class="nav-item"><a class="nav-link active" href="@Url.Action("Index", "Home")">Trang chủ</a></li>
+                    @Html.Action("_MenuThucDon", "Home")
+                    <li class="nav-item"><a class="nav-link" href="#">Về chúng tôi</a></li>
+                    @if (Session["User"] != null)
+                    {
+                        if (user.makh != null)
+                        {
+                            <li class="nav-item"><a class="nav-link" href="@Url.Action("LSDonHang", "Home")">Lịch sử đơn hàng</a></li>
+                        }
+                        else
+                        {
+                            <li class="dropdown nav-item">
+                                <a href="#" class="nav-link dropdown-toggle" data-bs-toggle="dropdown">Quản trị</a>
+                                <ul class="dropdown-menu">
+                                    <li><a class="dropdown-item" href="@Url.Action("QLThucDon", "Home")">Quản lý thực đơn</a></li>
+                                    <li><a class="dropdown-item" href="@Url.Action("QLDonHang", "Home")">Quản lý đơn hàng</a></li>
+                                    <li><a class="dropdown-item" href="@Url.Action("ThongKe", "Home")">Thống kê doanh thu</a></li>
+                                </ul>
+                            </li>
+                        }
+                    }
+                </ul>
+            </div>
+        </div>
+    </nav>
+
+    <!-- Hero Section -->
+    @if (ViewContext.RouteData.Values["controller"].ToString() == "Home" &&
+     ViewContext.RouteData.Values["action"].ToString() == "Index")
+    {
+        <section class="hero-section">
+            <div class="container">
+                <div class="row align-items-center flex-column-reverse flex-md-row">
+                    <div class="col-md-6 mt-4 mt-md-0 text-center text-md-start">
+                        <h1 class="hero-title mb-3">Vị Ngon <br><span style="color: var(--primary-color)">Đánh Thức</span> Mọi Giác Quan</h1>
+                        <p class="lead text-muted mb-4 fs-6">Đặt món nhanh chóng, giao hàng tận nơi. Đăng nhập ngay để nhận ưu đãi giảm giá 20% cho đơn đầu tiên!</p>
+                        <div class="d-flex gap-3 justify-content-center justify-content-md-start hero-btns">
+                            <a href="#menu" class="btn btn-danger rounded-pill px-5 py-3 fw-bold shadow-lg" style="background: var(--primary-color); border:none;">Đặt Ngay <i class="fas fa-arrow-right ms-2"></i></a>
+                            <button class="btn btn-white bg-white rounded-pill px-4 py-3 fw-bold shadow-sm text-dark"><i class="fas fa-play me-2 text-danger"></i> Xem Video</button>
+                        </div>
+                    </div>
+                    <div class="col-md-6 text-center">
+                        <div class="hero-img-wrap">
+                            <img src="https://images.unsplash.com/photo-1546069901-ba9599a7e63c?ixlib=rb-1.2.1&auto=format&fit=crop&w=800&q=80" class="img-fluid" alt="Hero Food">
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+    }
+
+
+    <main class="container mb-5 mt-5">
+        @Html.Partial("_ThongBao")
+        @RenderBody()
+    </main>
+
+    <!-- Footer -->
+    <footer class="bg-white border-top mt-5 pt-5">
+        <div class="container pb-4">
+            <div class="row g-4">
+                <div class="col-md-4">
+                    <h5 class="fw-bold text-dark mb-3"><i class="fas fa-burger text-danger me-2"></i>FoodStore</h5>
+                    <p class="text-muted small">Hệ thống đặt món ăn trực tuyến hàng đầu. Cam kết chất lượng, giao hàng nhanh chóng và phục vụ tận tâm.</p>
+                </div>
+                <div class="col-md-4">
+                    <h6 class="fw-bold mb-3">Liên kết</h6>
+                    <ul class="list-unstyled text-muted small">
+                        <li class="mb-2"><a href="#" class="text-decoration-none text-muted">Về chúng tôi</a></li>
+                        <li class="mb-2"><a href="#" class="text-decoration-none text-muted">Chính sách bảo mật</a></li>
+                        <li class="mb-2"><a href="#" class="text-decoration-none text-muted">Điều khoản sử dụng</a></li>
+                    </ul>
+                </div>
+                <div class="col-md-4">
+                    <h6 class="fw-bold mb-3">Liên hệ</h6>
+                    <p class="text-muted small mb-1"><i class="fas fa-map-marker-alt me-2"></i> Hồ Chí Minh, Việt Nam</p>
+                    <p class="text-muted small mb-1"><i class="fas fa-envelope me-2"></i> contact@foodstore.com</p>
+                </div>
+            </div>
+        </div>
+        <div class="text-center py-3 bg-light border-top">
+            <small class="text-muted">&copy; 2025 FoodStore. Love u ❤️</small>
+        </div>
+    </footer>
+
+    <!--Giỏ hàng-->
+    <div class="modal fade" id="cartModal" tabindex="-1">
+        <div class="modal-dialog modal-dialog-centered modal-dialog-scrollable">
+            <div class="modal-content border-0 shadow-lg rounded-4">
+                <div class="modal-header border-bottom-0 pb-0">
+                    <h5 class="modal-title fw-bold">Giỏ hàng của bạn 🛒</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+                </div>
+                <div class="modal-body" id="cart-modal-content">
+                    @Html.Action("ViewCart", "Cart")
+                </div>
+            </div>
+        </div>
+    </div>
+    <!--Option Login-->
+    @Html.Action("optLogin", "User")
+    <!-- Bootstrap JS -->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    <script>
+        $(document).on("click", ".btn-plus", function () {
+            let id = $(this).data("id");
+            // Thêm callback function (tham số thứ 2) để chạy sau khi load xong
+            $("#cart-modal-content").load("/Cart/UpdateSL?id=" + id + "&type=1");
+        });
+
+        $(document).on("click", ".btn-minus", function () {
+            let id = $(this).data("id");
+            // Thêm callback function (tham số thứ 2) để chạy sau khi load xong
+            $("#cart-modal-content").load("/Cart/UpdateSL?id=" + id + "&type=-1");
+        });
+    </script>
+
+</body>
+</html>

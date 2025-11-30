@@ -1,0 +1,200 @@
+﻿@model IEnumerable<BanDoAn.tblHoaDon>
+@using System.Globalization
+
+@{
+    ViewBag.Title = "Lịch sử đơn hàng";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+<div class="container py-5">
+    <h2 class="fw-bold mb-4 text-center"><i class="fas fa-history me-2 text-primary"></i>Lịch sử đơn hàng</h2>
+
+    @if (!Model.Any())
+    {
+        <div class="text-center py-5 bg-light rounded-4">
+            <img src="https://cdn-icons-png.flaticon.com/512/2038/2038854.png" width="100" class="mb-3 opacity-50">
+            <p class="text-muted fw-bold">Bạn chưa đặt đơn hàng nào.</p>
+            <a href="@Url.Action("Index", "Home")" class="btn btn-primary rounded-pill">Đặt món ngay</a>
+        </div>
+    }
+    else
+    {
+        <div class="table-responsive shadow-sm rounded-4">
+            <table class="table table-hover align-middle mb-0 bg-white">
+                <thead class="bg-light">
+                    <tr>
+                        <th class="py-3 ps-4">Mã đơn</th>
+                        <th class="py-3">Ngày đặt</th>
+                        <th class="py-3">Tổng tiền</th>
+                        <th class="py-3">Trạng thái</th>
+                        <th class="py-3">Chi tiết</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    @foreach (var item in Model)
+                    {
+                        <tr>
+                            <td class="ps-4 fw-bold text-muted">#@item.MaHD</td>
+                            <td>@item.NgayLap.Value.ToString("dd/MM/yyyy HH:mm")</td>
+                            <td class="fw-bold text-danger">@item.TongTien.Value.ToString("N0", new CultureInfo("vi-VN")) ₫</td>
+                            <td>
+                                @if (item.TinhTrang == 1) // Chờ xử lý
+                                {
+                                    <span class="badge bg-warning text-dark">@item.tblTinhTrang.TinhTrangHoaDon</span>
+                                }
+                                else if (item.TinhTrang == 2) // Đã giao
+                                {
+                                    <span class="badge bg-success">@item.tblTinhTrang.TinhTrangHoaDon</span>
+                                }
+                                else // Đã hủy
+                                {
+                                    <span class="badge bg-danger">@item.tblTinhTrang.TinhTrangHoaDon</span>
+                                }
+                            </td>
+                            <td>
+                                <button class="btn btn-sm btn-outline-primary rounded-pill px-3"
+                                        data-bs-toggle="collapse"
+                                        data-bs-target="#detail-@item.MaHD">
+                                    Xem món
+                                </button>
+
+                                <!-- Nút Hủy kích hoạt Modal -->
+                                @if (item.TinhTrang == 1)
+                                {
+                                    <button type="button"
+                                            class="btn btn-sm btn-outline-danger rounded-pill px-3 ms-1 btn-cancel-confirm"
+                                            data-id="@item.MaHD"
+                                            data-href="@Url.Action("CancelOrder", "Home", new { id = item.MaHD })">
+                                        Hủy
+                                    </button>
+                                }
+                            </td>
+                        </tr>
+                        <!-- Dòng chi tiết ẩn -->
+                        <tr class="collapse" id="detail-@item.MaHD">
+                            <td colspan="5" class="p-0 border-0">
+                                <div class="bg-light p-4 border-bottom shadow-inner">
+                                    <div class="bg-white rounded-3 shadow-sm p-3 border">
+                                        <div class="d-flex justify-content-between align-items-center mb-3 pb-2 border-bottom">
+                                            <h6 class="fw-bold text-primary m-0"><i class="fas fa-utensils me-2"></i>Chi tiết đơn hàng #@item.MaHD</h6>
+                                            <span class="text-muted small"><i class="fas fa-map-marker-alt me-1"></i> @item.DiaChiGiaoHang</span>
+                                        </div>
+
+                                        <!-- Header Row -->
+                                        <div class="row g-0 text-muted small fw-bold text-uppercase mb-2 d-none d-md-flex px-2">
+                                            <div class="col-md-5">Sản phẩm</div>
+                                            <div class="col-md-2 text-center">Đơn giá</div>
+                                            <div class="col-md-2 text-center">Số lượng</div>
+                                            <div class="col-md-3 text-end">Thành tiền</div>
+                                        </div>
+
+                                        <!-- Items List -->
+                                        <div class="d-flex flex-column gap-2">
+                                            @foreach (var chiTiet in item.tblChiTietHoaDon)
+                                            {
+                                                <div class="row g-0 align-items-center p-2 rounded-3 hover-bg-light border-bottom border-light">
+                                                    <!-- Image & Name -->
+                                                    <div class="col-md-5 d-flex align-items-center">
+                                                        <div class="position-relative me-3">
+                                                            <img src="@Url.Content("~/Content/images/" + chiTiet.tblSanPham.AnhBia)"
+                                                                 class="rounded-3 border"
+                                                                 width="60" height="60"
+                                                                 style="object-fit:cover">
+                                                            <span class="position-absolute top-0 start-0 translate-middle badge rounded-pill bg-secondary d-md-none">
+                                                                x @chiTiet.SoLuong
+                                                            </span>
+                                                        </div>
+                                                        <div>
+                                                            <div class="fw-bold text-dark">@chiTiet.tblSanPham.TenSP</div>
+                                                            <div class="small text-muted">@(chiTiet.tblSanPham.tblDanhMucCon?.TenDM ?? "Món ngon")</div>
+                                                        </div>
+                                                    </div>
+
+                                                    <!-- Price -->
+                                                    <div class="col-md-2 text-center d-none d-md-block">
+                                                        <small class="text-muted">@chiTiet.GiaBan.Value.ToString("N0") ₫</small>
+                                                    </div>
+
+                                                    <!-- Quantity -->
+                                                    <div class="col-md-2 text-center d-none d-md-block">
+                                                        <span class="badge bg-light text-dark border px-3 py-2">x @chiTiet.SoLuong</span>
+                                                    </div>
+
+                                                    <!-- Subtotal -->
+                                                    <div class="col-md-3 text-end">
+                                                        <span class="fw-bold text-primary">
+                                                            @((chiTiet.GiaBan * chiTiet.SoLuong)?.ToString("N0")) ₫
+                                                        </span>
+                                                    </div>
+                                                </div>
+                                            }
+                                        </div>
+
+                                        <!-- Footer Summary -->
+                                        <div class="row mt-3 pt-3 border-top">
+                                            <div class="col-md-6">
+                                                <small class="text-muted fst-italic">Cảm ơn bạn đã đặt món tại FoodStore!</small>
+                                            </div>
+                                            <div class="col-md-6">
+                                                <div class="d-flex justify-content-between mb-1">
+                                                    <span class="text-muted">Tạm tính:</span>
+                                                    <span class="fw-bold">@item.TongTien.Value.ToString("N0") ₫</span>
+                                                </div>
+                                                <div class="d-flex justify-content-between mb-1">
+                                                    <span class="text-muted">Phí vận chuyển:</span>
+                                                    <span class="fw-bold text-success">Miễn phí</span>
+                                                </div>
+                                                <div class="d-flex justify-content-between align-items-center mt-2 pt-2 border-top">
+                                                    <span class="fw-bold fs-6">Tổng cộng:</span>
+                                                    <span class="fw-bold text-danger fs-5">@item.TongTien.Value.ToString("N0") ₫</span>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </td>
+                        </tr>
+                    }
+                </tbody>
+            </table>
+        </div>
+    }
+</div>
+
+<!-- Modal Xác Nhận Hủy (Bootstrap 5) -->
+<div class="modal fade" id="cancelConfirmModal" tabindex="-1" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered">
+        <div class="modal-content rounded-4 border-0 shadow-lg">
+            <div class="modal-body p-4 text-center">
+                <div class="mb-3">
+                    <i class="fas fa-exclamation-circle text-warning fa-4x"></i>
+                </div>
+                <h4 class="fw-bold mb-2">Xác nhận hủy đơn?</h4>
+                <p class="text-muted mb-4">Bạn có chắc chắn muốn hủy đơn hàng <span class="fw-bold text-dark" id="modal-order-id">#...</span> không?<br>Hành động này không thể hoàn tác.</p>
+
+                <div class="d-flex justify-content-center gap-2">
+                    <button type="button" class="btn btn-light rounded-pill px-4 fw-bold" data-bs-dismiss="modal">Không, giữ lại</button>
+                    <a href="#" id="btn-confirm-delete" class="btn btn-danger rounded-pill px-4 fw-bold">Có, hủy đơn</a>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+<script>
+    $(document).ready(function () {
+        // Bắt sự kiện click vào nút Hủy
+        $('.btn-cancel-confirm').click(function () {
+            var orderId = $(this).data('id');
+            var deleteUrl = $(this).data('href');
+
+            // Cập nhật thông tin vào Modal
+            $('#modal-order-id').text('#' + orderId);
+            $('#btn-confirm-delete').attr('href', deleteUrl);
+
+            // Hiển thị Modal
+            $('#cancelConfirmModal').modal('show');
+        });
+    });
+</script>

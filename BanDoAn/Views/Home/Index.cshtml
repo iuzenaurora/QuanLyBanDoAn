@@ -1,0 +1,86 @@
+﻿@model IEnumerable<BanDoAn.tblSanPham>
+@using System.Globalization
+
+@{
+    int index = 0;
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+<!-- Menu Section -->
+<section id="menu" class="container-fluid">
+    <div class="text-center mb-5">
+        <h5 class="text-danger fw-bold text-uppercase ls-2">Thực Đơn Của Chúng Tôi</h5>
+        <h2 class="fw-bold display-6">Hôm nay ăn gì? 😋</h2>
+    </div>
+
+    <div class="d-flex justify-content-center">
+        @Html.Action("_DanhMucThucDon", "Home")
+    </div>
+
+
+    <div>
+        <div class="row row-cols-2 row-cols-md-3 row-cols-lg-4 g-3 g-md-4" id="product-list">
+            @if (!Model.Any())
+            {
+                <div class="col-12 text-center py-5 text-muted">
+                    <i class="fas fa-search fa-2x mb-3 opacity-25"></i><br />
+                    Không tìm thấy món nào!
+                </div>
+            }
+            else
+            {
+                foreach (var item in Model)
+                {
+                    var delay = index * 50;
+
+                    <div class="col" style="animation: fadeIn 0.5s ease forwards @(delay + "ms"); opacity:0">
+
+                        <div class="product-card">
+
+                            <div class="product-img-container">
+
+                                <!-- Badge -->
+                                <span class="card-badge shadow-sm">
+                                    @(item.tblDanhMucCon?.TenDM ?? "Món ngon")
+                                </span>
+
+                                <!-- Product Image -->
+                                <a href="@Url.Action("Detail", "Home", new {id = item.MaSP})">
+                                    <img src="@Url.Content("~/Content/images/" + item.AnhBia)" class="product-img" alt="@item.TenSP" loading="lazy" />
+                                </a>
+                            </div>
+
+                            <div class="card-body">
+                                <!-- Name -->
+                                <h5 title="@item.TenSP">
+                                    <a class="product-title text-decoration-none" href="@Url.Action("Detail", "Home", new {id = item.MaSP})">
+                                        @item.TenSP
+                                    </a>
+                                </h5>
+
+                                <!-- Category Title -->
+                                <div class="product-sub">
+                                    @(item.tblDanhMucCon?.MaLoai == 1 ? "Món chính" : item.tblDanhMucCon?.MaLoai == 2 ? "Giải khát" : "Ngọt ngào")
+                                </div>
+
+                                <!-- Price + Add Button -->
+                                <div class="price-row">
+                                    <span class="product-price">
+                                        @item.GiaBan.Value.ToString("N0", new CultureInfo("vi-VN")) ₫
+                                    </span>
+
+                                    <a class="btn-add shadow-sm text-decoration-none" href="@Url.Action("AddToCart", "Cart", new { id = item.MaSP })">
+                                        <i class="fas fa-plus"></i>
+                                    </a>
+                                </div>
+                            </div>
+
+                        </div>
+                    </div>
+
+                    index++;
+                }
+            }
+        </div>
+    </div>
+</section>

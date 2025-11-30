@@ -1,0 +1,27 @@
+﻿@model IEnumerable<BanDoAn.tblLoaiSP>
+
+<ul class="nav nav-pills" id="pills-tab">
+    <li class="nav-item"><a class="nav-link @(Request.QueryString["MaLoai"] == null ? "active" : "")" href="@Url.Action("Index","Home")#menu">Tất cả</a></li>
+
+    @foreach (var item in Model)
+    {
+        <li class="nav-item">
+            <a href="@Url.Action("SanPhamTheoLoai", "Home", new {MaLoai = item.MaLoai})"
+               class="btn-loai nav-link @(Request.QueryString["MaLoai"] == item.MaLoai.ToString() ? "active" : "")">
+
+                @if (item.MaLoai == 1)
+                {
+                    <span>🍜</span> @item.TenLoai
+                }
+                else if (item.MaLoai == 2)
+                {
+                    <span>🥤</span> @item.TenLoai
+                }
+                else if (item.MaLoai == 3)
+                {
+                    <span>🍰</span> @item.TenLoai
+                }
+            </a>
+        </li>
+    }
+</ul>

@@ -1,0 +1,77 @@
+﻿<div class="modal fade" id="addProductModal" tabindex="-1">
+    <div class="modal-dialog modal-dialog-centered">
+        <div class="modal-content border-0 shadow-lg rounded-4">
+            <div class="modal-header border-0 bg-light">
+                <h5 class="modal-title fw-bold">Thêm món mới</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+            </div>
+            <div class="modal-body p-4">
+                <!-- Thêm action và method để submit form -->
+                @using (Html.BeginForm("AddOnSubmit", "Home", FormMethod.Post, new { enctype = "multipart/form-data" }))
+                {
+                    <!-- Tên Sản Phẩm (TenSP) -->
+                    <div class="mb-3">
+                        <label class="form-label fw-bold small text-muted">Tên món</label>
+                        <input type="text" name="TenSP" id="newProdName" class="form-control rounded-3" required>
+                    </div>
+
+                    <div class="row g-2 mb-3">
+                        <!-- Danh Mục Con (MaDM) - Khớp với Foreign Key trong SQL -->
+                        <div class="col-6">
+                            <label class="form-label fw-bold small text-muted">Danh mục chi tiết</label>
+                            <select name="MaDM" id="newProdCat" class="form-select rounded-3">
+                                @if (ViewBag.ListDanhMuc != null)
+                                {
+                                    // Ép kiểu ViewBag về List
+                                    var listDM = ViewBag.ListDanhMuc as IEnumerable<BanDoAn.tblDanhMucCon>;
+
+                                    // Nhóm danh mục theo tên Loại sản phẩm (tblLoaiSP)
+                                    // Lưu ý: Kiểm tra kỹ tên property navigation trong model của bạn (ở đây giả định là tblLoaiSP)
+                                    var groups = listDM.GroupBy(x => x.tblLoaiSP != null ? x.tblLoaiSP.TenLoai : "Khác");
+
+                                    foreach (var group in groups)
+                                    {
+                                        <optgroup label="@group.Key">
+                                            @foreach (var item in group)
+                                            {
+                                                <option value="@item.MaDM">@item.TenDM</option>
+                                            }
+                                        </optgroup>
+                                    }
+                                }
+                                else
+                                {
+                                    <option value="">-- Chưa tải danh mục --</option>
+                                }
+                            </select>
+                        </div>
+
+                        <!-- Giá Bán (GiaBan) -->
+                        <div class="col-6">
+                            <label class="form-label fw-bold small text-muted">Giá (VNĐ)</label>
+                            <input type="number" name="GiaBan" id="newProdPrice" class="form-control rounded-3" required>
+                        </div>
+                    </div>
+
+                    <!-- Mô Tả (MoTa) - Bổ sung cho khớp SQL -->
+                    <div class="mb-3">
+                        <label class="form-label fw-bold small text-muted">Mô tả món ăn</label>
+                        <textarea name="MoTa" id="newProdDesc" class="form-control rounded-3" rows="2" placeholder="Thành phần, hương vị..."></textarea>
+                    </div>
+
+                    <!-- Ảnh Bìa (AnhBia) -->
+                    <div class="mb-4">
+                        <label class="form-label fw-bold small text-muted">Tên file ảnh / URL</label>
+                        <!-- Nếu bạn lưu tên file (VD: hinh1.jpg) thì dùng input text -->
+                        @*<input type="text" name="AnhBia" id="newProdImg" class="form-control rounded-3" placeholder="Ví dụ: burger.jpg" required>*@
+
+                        <!-- LƯU Ý: Nếu bạn muốn upload file thật thì đổi thành type="file" và xử lý trong Controller -->
+                        <input type="file" name="fileUpload" class="form-control rounded-3">
+                    </div>
+
+                    <button type="submit" class="btn btn-success w-100 rounded-3 fw-bold shadow-sm">Thêm vào thực đơn</button>
+                }
+            </div>
+        </div>
+    </div>
+</div>

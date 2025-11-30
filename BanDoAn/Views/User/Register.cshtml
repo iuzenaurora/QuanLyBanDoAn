@@ -1,0 +1,102 @@
+﻿<link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,700;1,400&family=Nunito:wght@300;400;600;700&display=swap" rel="stylesheet">
+<link href="~/Content/regis_layout_css.css" rel="stylesheet" />
+
+@Html.Partial("_ThongBao")
+
+<div class="register-card" style="margin-top:200px">
+    <div class="card-header-custom">
+        <div class="brand-text">
+            FoodStore.<span>Com</span>
+        </div>
+        <h3 class="form-title">Đăng Ký Thành Viên</h3>
+        <p class="text-muted small mb-0">Điền thông tin của bạn để tham gia cùng chúng tôi</p>
+    </div>
+
+    <div class="card-body-custom">
+        @using (Html.BeginForm("RegisterOnSubmit", "User", FormMethod.Post))
+        {
+            <div class="row g-3">
+                <!-- Tên Khách Hàng -->
+                <div class="col-12">
+                    <div class="form-floating">
+                        <input type="text" class="form-control" id="Fullname" name="Fullname" placeholder="Họ và tên" required>
+                        <label for="Fullname">Họ và tên</label>
+                    </div>
+                </div>
+
+                <!-- Giới Tính & Năm Sinh -->
+                <div class="col-md-6">
+                    <div class="form-floating">
+                        <select class="form-select" id="GioiTinh" name="GioiTinh" style="border:none; border-bottom:2px solid #eee; border-radius:0; padding-top: 1.625rem;">
+                            <option value="Nam">Nam</option>
+                            <option value="Nữ">Nữ</option>
+                            <option value="Khác">Khác</option>
+                        </select>
+                        <label for="GioiTinh">Giới tính</label>
+                    </div>
+                </div>
+                <div class="col-md-6">
+                    <div class="form-floating">
+                        <input type="number" class="form-control" id="NamSinh" name="NamSinh" placeholder="Năm sinh" min="1900" max="2025" required>
+                        <label for="NamSinh">Năm sinh</label>
+                    </div>
+                </div>
+
+                <!-- Email -->
+                <div class="col-12">
+                    <div class="form-floating">
+                        <input type="email" class="form-control" id="Email" name="Email" placeholder="Email" required>
+                        <label for="Email">Email (Tên đăng nhập)</label>
+                    </div>
+                </div>
+
+                <!-- SDT -->
+                <div class="col-12">
+                    <div class="form-floating">
+                        <input type="tel" class="form-control" id="SoDienThoai" name="SoDienThoai" placeholder="Số điện thoại" required>
+                        <label for="SoDienThoai">Số điện thoại</label>
+                    </div>
+                </div>
+
+                <!-- Địa Chỉ -->
+                <div class="col-12">
+                    <div class="form-floating">
+                        <input type="text" class="form-control" id="DiaChi" name="DiaChi" placeholder="Địa chỉ">
+                        <label for="DiaChi">Địa chỉ giao hàng</label>
+                    </div>
+                </div>
+
+                <!-- Mật Khẩu -->
+                <div class="col-md-6">
+                    <div class="form-floating">
+                        <input type="password" class="form-control" id="Pass" name="Pass" placeholder="Mật khẩu" required>
+                        <label for="Pass">Mật khẩu</label>
+                    </div>
+                </div>
+                <div class="col-md-6">
+                    <div class="form-floating">
+                        <input type="password" class="form-control" id="RePass" name="RePass" placeholder="Nhập lại mật khẩu" required>
+                        <label for="RePass">Xác nhận mật khẩu</label>
+                    </div>
+                </div>
+            </div>
+
+            <div class="d-flex justify-content-between">
+                <a href="@Url.Action("Index", "Home")" class="btn btn-index">
+                    <i class="fa-solid fa-arrow-left"></i> Quay về trang chủ
+                </a>
+                <button type="submit" class="btn-register">
+                    Hoàn tất đăng ký
+                </button>
+            </div>
+        }
+
+        <div class="text-center mt-4">
+            <small class="text-muted">Đã có tài khoản? <a href="@Url.Action("Login", "User")" class="login-link">Đăng nhập ngay</a></small>
+        </div>
+    </div>
+</div>
+
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>

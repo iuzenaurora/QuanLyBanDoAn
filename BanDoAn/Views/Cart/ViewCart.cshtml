@@ -1,0 +1,90 @@
+﻿@model BanDoAn.Models.Cart
+@using System.Globalization
+
+@if (Model.list.Any())
+{
+    /* --- PHẦN 1: DANH SÁCH SẢN PHẨM --- */
+    <div class="d-flex flex-column gap-3 mb-4" style="max-height: 400px; overflow-y: auto;">
+        @foreach (var item in Model.list)
+        {
+            <div class="d-flex align-items-center bg-light p-2 rounded-3">
+                <img src="@Url.Content("~/Content/images/" + item.AnhItem)"
+                     width="50" height="50" class="rounded-3 me-3" style="object-fit:cover">
+
+                <div class="flex-grow-1">
+                    <div class="fw-bold small text-truncate" style="max-width: 150px;">
+                        @item.TenItem
+                    </div>
+                    <div class="text-danger fw-bold small">
+                        @item.thanhtien.ToString("N0", new CultureInfo("vi-VN")) đ
+                    </div>
+                </div>
+
+                <div class="d-flex align-items-center bg-white rounded-pill border px-1">
+                    <!-- Javascript chỉ dùng để gọi action, không cần xử lý dữ liệu trả về -->
+                    <a href="javascript:void(0)" class="btn btn-sm text-dark py-0 px-2 btn-minus" data-id="@item.MaItem">-</a>
+                    <span class="small fw-bold px-1" style="min-width:20px; text-align:center">@item.soluong</span>
+                    <a href="javascript:void(0)" class="btn btn-sm text-dark py-0 px-2 btn-plus" data-id="@item.MaItem">+</a>
+                </div>
+            </div>
+        }
+    </div>
+
+
+    <div class="modal-footer border-top-0 d-block pt-0">
+        @{
+            // Lấy tổng tiền hàng từ Model
+            decimal tamTinh = Model.tongThanhTien();
+
+            // Giả sử logic tính giảm giá nằm ở đây (hoặc lấy từ Session)
+            // Ví dụ: Nếu tổng tiền > 500k thì giảm 50k, ngược lại giảm 0đ
+            // decimal giamGia = (tamTinh > 500000) ? 50000 : 0;
+            decimal giamGia = 0;
+
+            decimal tongThanhToan = tamTinh - giamGia;
+            if (tongThanhToan < 0) { tongThanhToan = 0; }
+        }
+
+        <!-- Dòng 1: Tạm tính -->
+        <div class="d-flex justify-content-between align-items-center mb-2">
+            <span class="text-muted">Tạm tính (@Model.tongSLHang() món):</span>
+            <span class="fw-bold">@tamTinh.ToString("N0", new CultureInfo("vi-VN")) ₫</span>
+        </div>
+
+        <!-- Dòng 2: Khuyến mãi (Hiển thị màu xanh cho nổi bật) -->
+        <div class="d-flex justify-content-between align-items-center mb-2">
+            <span class="text-success fw-bold"><i class="fas fa-ticket-alt me-1"></i>Khuyến mãi:</span>
+            <span class="fw-bold text-success">-@giamGia.ToString("N0", new CultureInfo("vi-VN")) ₫</span>
+        </div>
+        <div class="bg-light p-3 rounded-3 mb-3 d-flex justify-content-between align-items-center">
+            <span class="text-dark fw-bold">Tổng thanh toán:</span>
+            <span class="fw-bold text-danger fs-5">
+                @tongThanhToan.ToString("N0", new CultureInfo("vi-VN")) ₫
+            </span>
+        </div>
+
+        <a href="@Url.Action("OrderOnSubmit", "Cart")" class="btn btn-primary w-100 rounded-pill py-2 fw-bold shadow-sm btn-thanhtoan"
+                style="background: var(--primary-color); border:none">
+            Tiến hành đặt hàng
+        </a>
+    </div>
+
+    @* --- Dùng soLuongMH() để Javascript lấy giá trị này cập nhật lên Layout --- *@
+    <input type="hidden" id="hidden-cart-count-val" value="@Model.soLuongMH()" />
+}
+else
+{
+    <div class="text-center py-5">
+        <img src="https://cdn-icons-png.flaticon.com/512/11329/11329060.png" width="80" class="mb-3 opacity-50">
+        <p class="text-muted fw-bold">Giỏ hàng đang trống!</p>
+        <button class="btn btn-sm btn-outline-danger rounded-pill" data-bs-dismiss="modal" onclick="window.location.href='#menu'">Đi chợ ngay</button>
+    </div>
+
+    @* Cập nhật về 0 khi trống *@
+    <input type="hidden" id="hidden-cart-count-val" value="0" />
+}
+
+<script>
+    // Nó lấy giá trị từ hidden input ở trên và gán thẳng vào badge đỏ ở Layout
+    $("#cart-count").text($("#hidden-cart-count-val").val());
+</script>

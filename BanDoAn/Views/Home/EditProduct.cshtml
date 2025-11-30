@@ -1,0 +1,71 @@
+﻿@model BanDoAn.tblSanPham
+
+<!-- Form trỏ đến Action EditOnSubmit -->
+@using (Html.BeginForm("EditOnSubmit", "Home", FormMethod.Post, new { enctype = "multipart/form-data", id = "editForm" }))
+{
+    <!-- INPUT ẨN: Chứa MaSP để biết đang sửa món nào -->
+    <input type="hidden" name="MaSP" id="editMaSP" value="@Model.MaSP" />
+
+    <!-- Tên Sản Phẩm -->
+    <div class="mb-3">
+        <label class="form-label fw-bold small text-muted">Tên món</label>
+        <input type="text" name="TenSP" id="editTenSP" class="form-control rounded-3" value="@Model.TenSP"  required>
+    </div>
+
+    <div class="row g-2 mb-3">
+        <!-- Danh mục -->
+        <div class="col-6">
+            <label class="form-label fw-bold small text-muted">Danh mục</label>
+            <select name="MaDM" id="editMaDM" class="form-select rounded-3">
+                @if (ViewBag.ListDanhMuc != null)
+                {
+                    var listDM = ViewBag.ListDanhMuc as IEnumerable<BanDoAn.tblDanhMucCon>;
+                    var groups = listDM.GroupBy(x => x.tblLoaiSP != null ? x.tblLoaiSP.TenLoai : "Khác");
+                    foreach (var group in groups)
+                    {
+                        <optgroup label="@group.Key">
+                            @foreach (var item in group)
+                            {
+                                <option value="@item.MaDM" @(item.MaDM == Model.MaDM ? "selected" : "")>@item.TenDM</option>
+                            }
+                        </optgroup>
+                    }
+                }
+            </select>
+        </div>
+
+        <!-- Giá Bán -->
+        <div class="col-6">
+            <label class="form-label fw-bold small text-muted">Giá (VNĐ)</label>
+            <input type="text" name="GiaBan" id="editGiaBan" class="form-control rounded-3" value="@Model.GiaBan" required>
+        </div>
+    </div>
+
+    <!-- Mô Tả -->
+    <div class="mb-3">
+        <label class="form-label fw-bold small text-muted">Mô tả món ăn</label>
+        <textarea type name="MoTa" id="editMoTa" class="form-control rounded-3" rows="2">@Model.MoTa</textarea>
+    </div>
+
+    <!-- Ảnh Bìa -->
+    <div class="mb-4">
+        <label class="form-label fw-bold small text-muted">Ảnh bìa</label>
+
+        <!-- Hiển thị ảnh hiện tại -->
+        <div class="d-flex align-items-center mb-2 p-2 border rounded bg-light">
+            <img id="previewEditImg" src="@Url.Content("~/Content/images/" + Model.AnhBia)" width="50" height="50" class="rounded object-fit-cover me-3">
+            <div class="small text-muted">
+                <span>Ảnh hiện tại: </span>
+                <span id="currentImgName" class="fw-bold">@Model.AnhBia</span>
+                <!-- Input ẩn để giữ lại tên ảnh cũ nếu người dùng không chọn ảnh mới -->
+                <input type="hidden" name="AnhBiaCu" id="editAnhBiaCu" value="@Model.AnhBia"/>
+            </div>
+        </div>
+
+        <!-- Input chọn ảnh mới -->
+        <input type="file" name="fileUpload" class="form-control rounded-3">
+        <div class="form-text small">Bỏ qua nếu không muốn thay đổi ảnh.</div>
+    </div>
+
+    <button type="submit" class="btn btn-primary w-100 rounded-3 fw-bold shadow-sm">Lưu thay đổi</button>
+}

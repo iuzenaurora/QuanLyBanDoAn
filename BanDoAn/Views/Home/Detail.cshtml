@@ -1,0 +1,428 @@
+﻿@model BanDoAn.tblSanPham
+@using System.Globalization
+@{
+    ViewBag.Title = "Detail";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+<style>
+    /* --- PRODUCT DETAIL SPECIFIC CSS --- */
+
+    /* Breadcrumb */
+    .breadcrumb-item a {
+        color: #636e72;
+        text-decoration: none;
+        font-weight: 600;
+    }
+
+    .breadcrumb-item.active {
+        color: var(--primary-color);
+        font-weight: 700;
+    }
+    /* Gallery Section */
+    .product-gallery {
+        position: relative;
+        border-radius: 20px;
+        overflow: hidden;
+        background: white;
+        box-shadow: 0 5px 20px rgba(0,0,0,0.05);
+        padding: 10px;
+    }
+
+    .main-image-container {
+        position: relative;
+        height: 400px;
+        border-radius: 15px;
+        overflow: hidden;
+        margin-bottom: 15px;
+        background: #f9f9f9;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+    }
+
+    .main-image {
+        width: 100%;
+        height: 100%;
+        object-fit: cover; /* Hoặc contain tùy ảnh */
+        transition: transform 0.5s ease;
+    }
+
+        .main-image:hover {
+            transform: scale(1.1);
+            cursor: zoom-in;
+        }
+
+    .thumb-list {
+        display: flex;
+        gap: 10px;
+        overflow-x: auto;
+        padding-bottom: 5px;
+    }
+
+    .thumb-item {
+        width: 80px;
+        height: 80px;
+        border-radius: 10px;
+        cursor: pointer;
+        border: 2px solid transparent;
+        object-fit: cover;
+        opacity: 0.7;
+        transition: 0.3s;
+    }
+
+        .thumb-item:hover, .thumb-item.active {
+            border-color: var(--primary-color);
+            opacity: 1;
+        }
+
+    /* Product Info Section */
+    .product-info-wrap {
+        padding: 10px 10px 10px 20px;
+    }
+
+    .product-cat {
+        color: #b2bec3;
+        font-weight: 700;
+        text-transform: uppercase;
+        letter-spacing: 1px;
+        font-size: 0.85rem;
+        margin-bottom: 5px;
+    }
+
+    .detail-title {
+        font-size: 2.2rem;
+        font-weight: 800;
+        margin-bottom: 10px;
+        line-height: 1.2;
+    }
+
+    .detail-price {
+        font-size: 2rem;
+        color: var(--primary-color);
+        font-weight: 800;
+        margin-bottom: 20px;
+        display: flex;
+        align-items: center;
+        gap: 15px;
+    }
+
+    /* Quantity Input */
+    .quantity-control {
+        display: flex;
+        align-items: center;
+        background: #f1f2f6;
+        border-radius: 30px;
+        padding: 5px;
+        width: fit-content;
+        margin-bottom: 25px;
+    }
+
+    .qty-btn {
+        width: 35px;
+        height: 35px;
+        border-radius: 50%;
+        border: none;
+        background: white;
+        color: var(--text-dark);
+        font-weight: bold;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        cursor: pointer;
+        box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+        transition: 0.2s;
+    }
+
+        .qty-btn:hover {
+            background: var(--primary-color);
+            color: white;
+        }
+
+    .qty-input {
+        width: 50px;
+        text-align: center;
+        border: none;
+        background: transparent;
+        font-weight: 700;
+        font-size: 1.1rem;
+        outline: none;
+    }
+
+    /* Action Buttons */
+    .action-buttons {
+        display: flex;
+        gap: 15px;
+        margin-bottom: 30px;
+    }
+
+    .btn-addcart-now {
+        flex: 1;
+        background-color: var(--primary-color);
+        color: white;
+        border: none;
+        padding: 15px 30px;
+        border-radius: 50px;
+        font-weight: 700;
+        font-size: 1.1rem;
+        box-shadow: 0 10px 20px rgba(255, 107, 107, 0.3);
+        transition: 0.3s;
+    }
+
+        .btn-addcart-now:hover {
+            background-color: var(--primary-hover);
+            transform: translateY(-3px);
+            box-shadow: 0 15px 25px rgba(255, 107, 107, 0.4);
+        }
+
+    .feature-box {
+        display: flex;
+        gap: 15px;
+        padding: 20px;
+        background: white;
+        border-radius: 15px;
+        box-shadow: 0 5px 15px rgba(0,0,0,0.03);
+        margin-bottom: 15px;
+        align-items: center;
+    }
+
+    .feature-icon {
+        width: 50px;
+        height: 50px;
+        background: var(--secondary-color);
+        color: var(--primary-color);
+        border-radius: 50%;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 1.2rem;
+    }
+
+    /* Content Tabs */
+    .detail-tabs {
+        margin-top: 50px;
+        background: white;
+        padding: 30px;
+        border-radius: 20px;
+        box-shadow: 0 5px 20px rgba(0,0,0,0.03);
+    }
+
+    .nav-tabs .nav-link {
+        border: none;
+        font-weight: 700;
+        color: #636e72;
+        padding: 15px 25px;
+        border-bottom: 3px solid transparent;
+    }
+
+        .nav-tabs .nav-link.active {
+            color: var(--primary-color);
+            border-bottom-color: var(--primary-color);
+            background: none;
+        }
+
+    .tab-content {
+        padding-top: 25px;
+        color: #2d3436;
+        line-height: 1.7;
+    }
+
+    @@media (max-width: 768px) {
+            .main-image-container { height: 300px; }
+            .detail-title { font-size: 1.8rem; }
+            .product-info-wrap { padding: 0; margin-top: 20px; }
+            .action-buttons { position: fixed; bottom: 0; left: 0; right: 0; background: white; padding: 15px; box-shadow: 0 -5px 20px rgba(0,0,0,0.1); z-index: 1000; margin: 0; border-radius: 20px 20px 0 0; }
+            body { padding-bottom: 80px; } /* Space for fixed bar */
+        }
+</style>
+
+<div class="row">
+    <!-- Left Column: Images (tblHinhAnh + tblSanPham.AnhBia) -->
+    <div class="col-lg-6 mb-4">
+        <div class="product-gallery">
+            <div class="main-image-container">
+                <!-- Ảnh bìa chính (tblSanPham.AnhBia) -->
+                <img src="@Url.Content("~/Content/images/" + Model.AnhBia)" id="mainImage" class="main-image" alt="Burger Bò">
+            </div>
+
+            <!-- List Ảnh nhỏ (tblHinhAnh) -->
+            <div class="thumb-list">
+                <img src="@Url.Content("~/Content/images/" + Model.AnhBia)" class="thumb-item active" onclick="changeImage(this)">
+
+                @foreach (var img in Model.tblHinhAnh)
+                {
+                    <img src="@Url.Content("~/Content/images/" + img.TenHinh)" class="thumb-item" onclick="changeImage(this)">
+                }
+            </div>
+        </div>
+    </div>
+
+    <!-- Right Column: Product Details (tblSanPham) -->
+    <div class="col-lg-6">
+        <div class="product-info-wrap">
+            <div class="product-cat">@Model.tblDanhMucCon.TenDM</div> <!-- tblDanhMucCon.TenDM -->
+            <h1 class="detail-title">@Model.TenSP</h1> <!-- tblSanPham.TenSP -->
+
+            <div class="d-flex align-items-center mb-3">
+                <div class="text-warning small me-2">
+                    <i class="fas fa-star"></i>
+                    <i class="fas fa-star"></i>
+                    <i class="fas fa-star"></i>
+                    <i class="fas fa-star"></i>
+                    <i class="fas fa-star-half-alt"></i>
+                </div>
+                <span class="text-muted small">(128 đánh giá)</span>
+                <span class="mx-2 text-muted">|</span>
+                <span class="text-success small"><i class="fas fa-check-circle me-1"></i>Còn hàng</span>
+            </div>
+
+            <div class="detail-price">
+                <span>@Model.GiaBan.Value.ToString("N0", new CultureInfo("vi-VN")) ₫</span> <!-- tblSanPham.GiaBan -->
+            </div>
+
+            <!-- Chọn số lượng (Logic giỏ hàng) -->
+            @*<div class="d-flex align-items-center mb-4">
+                <span class="fw-bold me-3">Số lượng:</span>
+                <div class="quantity-control">
+                    <button class="qty-btn" onclick="decreaseQty()"><i class="fas fa-minus"></i></button>
+                    <input type="number" id="qtyInput" class="qty-input" value="1" min="1" readonly>
+                    <button class="qty-btn" onclick="increaseQty()"><i class="fas fa-plus"></i></button>
+                </div>
+            </div>*@
+
+            <!-- Buttons -->
+            <div class="action-buttons">
+                <a href="@Url.Action("AddToCart", "Cart", new {id = Model.MaSP})" class="btn btn-addcart-now">
+                    Thêm vào giỏ hàng <i class="fas fa-arrow-right ms-2"></i>
+                </a>
+            </div>
+
+            <!-- Features / Cam kết -->
+            <div class="row g-2 mt-4">
+                <div class="col-sm-6">
+                    <div class="feature-box">
+                        <div class="feature-icon"><i class="fas fa-shipping-fast"></i></div>
+                        <div class="small fw-bold">Giao nhanh<br>trong 30 phút</div>
+                    </div>
+                </div>
+                <div class="col-sm-6">
+                    <div class="feature-box">
+                        <div class="feature-icon"><i class="fas fa-shield-alt"></i></div>
+                        <div class="small fw-bold">Đảm bảo<br>vệ sinh ATTP</div>
+                    </div>
+                </div>
+            </div>
+
+        </div>
+    </div>
+</div>
+
+<!-- Tabs Info -->
+<div class="detail-tabs mt-5">
+    <ul class="nav nav-tabs" id="myTab" role="tablist">
+        <li class="nav-item" role="presentation">
+            <button class="nav-link active" id="desc-tab" data-bs-toggle="tab" data-bs-target="#desc" type="button">Mô tả chi tiết</button>
+        </li>
+        <li class="nav-item" role="presentation">
+            <button class="nav-link" id="review-tab" data-bs-toggle="tab" data-bs-target="#review" type="button">Đánh giá (128)</button>
+        </li>
+    </ul>
+    <div class="tab-content" id="myTabContent">
+        <div class="tab-pane fade show active" id="desc" role="tabpanel">
+            <!-- tblSanPham.MoTa (Hiển thị đầy đủ) -->
+            <h5>Thông tin về @Model.TenSP</h5>
+            <p>@Model.MoTa.</p>
+        </div>
+        <div class="tab-pane fade" id="review" role="tabpanel">
+            <!-- Mock Review -->
+            <div class="d-flex mb-3 border-bottom pb-3">
+                <img src="https://ui-avatars.com/api/?name=Nguyen+Van+A&background=random" class="rounded-circle me-3" width="40" height="40">
+                <div>
+                    <h6 class="fw-bold mb-1">Nguyễn Văn A</h6>
+                    <div class="text-warning small mb-1"><i class="fas fa-star"></i><i class="fas fa-star"></i><i class="fas fa-star"></i><i class="fas fa-star"></i><i class="fas fa-star"></i></div>
+                    <p class="text-muted small mb-0">Tuyệt cú mèo!</p>
+                </div>
+            </div>
+            <div class="d-flex mb-3">
+                <img src="https://ui-avatars.com/api/?name=Tran+Thi+B&background=random" class="rounded-circle me-3" width="40" height="40">
+                <div>
+                    <h6 class="fw-bold mb-1">Trần Thị B</h6>
+                    <div class="text-warning small mb-1"><i class="fas fa-star"></i><i class="fas fa-star"></i><i class="fas fa-star"></i><i class="fas fa-star"></i><i class="far fa-star"></i></div>
+                    <p class="text-muted small mb-0">Trời ơi tui chưa bao giờ được hưởng hương vị tuyệt vời thế này.</p>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Related Products -->
+<div class="mt-5 mb-5">
+    <h3 class="fw-bold mb-4">Có thể bạn sẽ thích 😋</h3>
+    <div class="row row-cols-2 row-cols-md-4 g-3">
+
+        @if (ViewBag.ListSPLienQuan == null)
+        {
+            <div class="col-12 text-center py-5 text-muted">
+                Tạm thời hết sản phẩm liên quan!
+            </div>
+        }
+        else
+        {
+            var listRelated = ViewBag.ListSPLienQuan as IEnumerable<BanDoAn.tblSanPham>;
+            foreach (var item in listRelated)
+            {
+                <div class="col">
+                    <div class="product-card">
+
+                        <div class="product-img-container">
+
+                            <!-- Badge -->
+                            <span class="card-badge shadow-sm">
+                                @(item.tblDanhMucCon?.TenDM ?? "Món ngon")
+                            </span>
+
+                            <!-- Product Image -->
+                            <img src="@Url.Content("~/Content/images/" + item.AnhBia)"
+                                 class="product-img"
+                                 alt="@item.TenSP"
+                                 loading="lazy" />
+                        </div>
+
+                        <div class="card-body">
+                            <!-- Name -->
+                            <h5 class="product-title" title="@item.TenSP">@item.TenSP</h5>
+
+                            <!-- Category Title -->
+                            <div class="product-sub">
+                                @(item.tblDanhMucCon?.MaLoai == 1 ? "Món chính" : item.tblDanhMucCon?.MaLoai == 2 ? "Giải khát" : "Ngọt ngào")
+                            </div>
+
+                            <!-- Price + Add Button -->
+                            <div class="price-row">
+                                <span class="product-price">
+                                    @item.GiaBan.Value.ToString("N0", new CultureInfo("vi-VN")) ₫
+                                </span>
+
+                                <a class="btn-add shadow-sm text-decoration-none" href="@Url.Action("AddToCart", "Cart", new { id = item.MaSP })">
+                                    <i class="fas fa-plus"></i>
+                                </a>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            }
+        }
+
+
+    </div>
+</div>
+
+<script>
+    function changeImage(element) {
+        // Thay đổi ảnh chính
+        document.getElementById('mainImage').src = element.src;
+
+        // Xử lý active class
+        document.querySelectorAll('.thumb-item').forEach(img => img.classList.remove('active'));
+        element.classList.add('active');
+    }
+</script>

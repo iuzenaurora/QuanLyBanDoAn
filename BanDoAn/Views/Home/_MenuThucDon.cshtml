@@ -1,0 +1,30 @@
+﻿@model IEnumerable<BanDoAn.tblLoaiSP>
+
+<li class="nav-item dropdown">
+    <a class="nav-link dropdown-toggle" href="#" data-bs-toggle="dropdown">Thực đơn</a>
+
+    <ul class="dropdown-menu">
+        <li><a class="dropdown-item" href="@Url.Action("Index", "Home")#menu">Tất cả</a></li>
+
+        @foreach (var item in Model)
+        {
+            <li class="dropdown-submenu">
+                <a class="dropdown-item" href="#">
+                    @item.TenLoai
+                </a>
+
+                <ul class="dropdown-menu">
+                    @foreach (var sub in item.tblDanhMucCon)
+                    {
+                        <li>
+                            <a class="dropdown-item"
+                               href="@Url.Action("SanPhamTheoDM", "Home", new { MaDM = sub.MaDM })">
+                                @sub.TenDM
+                            </a>
+                        </li>
+                    }
+                </ul>
+            </li>
+        }
+    </ul>
+</li>
