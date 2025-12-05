@@ -1,0 +1,147 @@
+﻿@model IEnumerable<BanDoAn.tblSanPham>
+@using System.Globalization
+@{
+    ViewBag.Title = "Quản lý Thực Đơn";
+    Layout = "~/Views/Shared/_adminLayout.cshtml";
+
+    // Lấy dữ liệu từ ViewBag
+    var listLoai = ViewBag.ListLoai as List<BanDoAn.tblLoaiSP>;
+    var selectedLoai = ViewBag.SelectedLoai as int[];
+}
+
+<!-- Header -->
+<div class="d-flex justify-content-between align-items-center mb-4 flex-wrap gap-2">
+    <div>
+        <h4 class="fw-bold mb-1">Quản lý sản phẩm</h4>
+        <p class="text-muted small mb-0">Quản lý danh sách món ăn, giá cả và hình ảnh.</p>
+    </div>
+
+    <div class="d-flex gap-2 align-items-center">
+        <form action="@Url.Action("QLThucDon", "Admin")" method="get" class="d-flex gap-2 m-0" id="filterForm">
+
+            <!-- Nút Lọc (Dropdown Checkbox) -->
+            <div class="dropdown">
+                <button class="btn border shadow-sm dropdown-toggle rounded-pill px-3 h-100" style="Background:white" type="button" data-bs-toggle="dropdown" aria-expanded="false">
+                    <i class="fas fa-filter me-2 text-primary"></i>Lọc loại
+                </button>
+                <div class="dropdown-menu p-3 shadow-lg border-0 rounded-4" style="min-width: 200px;">
+                    <h6 class="dropdown-header text-uppercase fw-bold small text-muted mb-2">Chọn loại món</h6>
+
+                    @if (listLoai != null)
+                    {
+                        foreach (var loai in listLoai)
+                        {
+                            bool isChecked = selectedLoai != null && selectedLoai.Contains(loai.MaLoai);
+                            <div class="form-check mb-2">
+                                <input class="form-check-input" type="checkbox" name="selectedLoai" value="@loai.MaLoai" id="loai_@loai.MaLoai" @(isChecked ? "checked" : "")>
+                                <label class="form-check-label" for="loai_@loai.MaLoai">
+                                    @loai.TenLoai
+                                </label>
+                            </div>
+                        }
+                    }
+
+                    <div class="d-grid mt-3">
+                        <button type="submit" class="btn btn-primary btn-sm rounded-pill fw-bold">Áp dụng</button>
+                        <a href="@Url.Action("QLThucDon", "Admin")" class="btn btn-link btn-sm text-decoration-none mt-1 text-muted">Xóa bộ lọc</a>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Nút submit ẩn để Input Text có thể Enter được -->
+            <button type="submit" class="d-none"></button>
+        </form>
+
+        <button class="btn btn-primary rounded-pill px-4 shadow-sm h-100" data-bs-toggle="modal" data-bs-target="#addProductModal">
+            <i class="fas fa-plus me-2"></i>Thêm Món
+        </button>
+    </div>
+</div>
+
+<!-- Table Panel -->
+<div class="card-panel p-0 overflow-hidden border-0">
+    <div class="table-responsive">
+        <table class="table table-hover align-middle mb-0">
+            <thead class="bg-light text-secondary small text-uppercase">
+                <tr>
+                    <th class="ps-4 py-3">Món ăn</th>
+                    <th>Danh mục</th>
+                    <th>Giá bán</th>
+                    <th class="text-end pe-4">Thao tác</th>
+                </tr>
+            </thead>
+            <tbody>
+                @if (Model != null && Model.Any())
+                {
+                    foreach (var item in Model)
+                    {
+                        <tr>
+                            <td class="ps-4 py-3">
+                                <div class="d-flex align-items-center">
+                                    <img src="@Url.Content("~/Content/images/" + item.AnhBia)"
+                                         class="rounded-3 me-3 object-fit-cover border" width="48" height="48"
+                                         onerror="this.src='https://placehold.co/48x48?text=Img'">
+                                    <div>
+                                        <div class="fw-bold text-dark">@item.TenSP</div>
+                                        <div class="small text-muted">ID: #@item.MaSP</div>
+                                    </div>
+                                </div>
+                            </td>
+                            <td>
+                                <span class="badge bg-light text-dark border">
+                                    @(item.tblDanhMucCon?.TenDM ?? "Khác")
+                                </span>
+                            </td>
+                            <td class="fw-bold text-danger">
+                                @item.GiaBan.Value.ToString("N0", new CultureInfo("vi-VN")) đ
+                            </td>
+                            <td class="text-end pe-4">
+                                <button data-bs-toggle="modal" data-bs-target="#editProductModal" data-id="@item.MaSP" class="edit-btn btn btn-sm btn-light text-primary border me-1" data-bs-toggle="tooltip" title="Sửa sản phẩm">
+                                    <i class="fa-solid fa-pen"></i>
+                                </button>
+                                <a href="@Url.Action("Detail", "Home", new { id=item.MaSP })" class="btn btn-sm btn-light me-1 shadow-sm" data-bs-toggle="tooltip" title="Chi tiết">
+                                    <i class="fas fa-eye"></i>
+                                </a>
+                                <a href="@Url.Action("Delete", "Admin", new {id = item.MaSP})"
+                                   class="btn btn-sm btn-light text-danger border"
+                                   data-bs-toggle="tooltip" title="Xóa sản phẩm">
+                                    <i class="fas fa-trash-alt"></i>
+                                </a>
+                            </td>
+                        </tr>
+                    }
+                }
+                else
+                {
+                    <tr>
+                        <td colspan="4" class="text-center py-5 text-muted">Không tìm thấy món ăn nào.</td>
+                    </tr>
+                }
+            </tbody>
+        </table>
+    </div>
+</div>
+
+@Html.Action("Create", "Admin")
+
+<div class="modal fade" id="editProductModal" tabindex="-1">
+    <div class="modal-dialog modal-dialog-centered">
+        <div class="modal-content border-0 shadow-lg rounded-4">
+            <div class="modal-header border-0 pb-0">
+                <h5 class="modal-title fw-bold">Cập nhật món ăn</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+            </div>
+            <div class="modal-body p-4" id="editProductContainer">
+                <!-- Nội dung load từ Ajax -->
+            </div>
+        </div>
+    </div>
+</div>
+
+<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+<script>
+    $(document).on("click", ".edit-btn", function () {
+        var id = $(this).data("id");
+        $("#editProductContainer").load("/Admin/Edit?id=" + id);
+    });
+</script>

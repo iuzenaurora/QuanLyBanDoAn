@@ -1,0 +1,310 @@
+﻿@{
+    ViewBag.Title = "Thống Kê Doanh Thu";
+    Layout = "~/Views/Shared/_adminLayout.cshtml";
+}
+
+<!-- Thư viện Chart.js -->
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+
+<!-- CSS Custom cho Dashboard -->
+<style>
+    /* Card Styles */
+    .info-card {
+        border-radius: 16px;
+        padding: 1.5rem;
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        color: white;
+        transition: transform 0.3s ease, box-shadow 0.3s ease;
+        height: 100%;
+    }
+
+        .info-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 10px 20px rgba(0,0,0,0.15) !important;
+        }
+
+    .card-icon {
+        width: 50px;
+        height: 50px;
+        border-radius: 12px;
+        background-color: rgba(255, 255, 255, 0.2);
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 1.5rem;
+        backdrop-filter: blur(5px);
+    }
+
+    .card-content .number {
+        font-size: 1.8rem;
+        font-weight: 700;
+        line-height: 1.2;
+    }
+
+    .card-content .label {
+        font-size: 0.9rem;
+        opacity: 0.9;
+        font-weight: 500;
+    }
+
+    /* Color Variants */
+    .card-order {
+        background: linear-gradient(135deg, #5b3e9e, #3d2a70);
+    }
+    /* Tím - Doanh thu */
+    .card-pending {
+        background: linear-gradient(135deg, #4a4aef, #2b2bb5);
+    }
+    /* Xanh - Khách hàng */
+    .card-cancelled {
+        background: linear-gradient(135deg, #ff6b81, #d63031);
+    }
+    /* Hồng - Sản phẩm */
+    .card-dispatched {
+        background: linear-gradient(135deg, #2ecc71, #27ae60);
+    }
+    /* Xanh lá - Số lượng bán */
+
+    /* Chart Card */
+    .chart-card {
+        background: white;
+        border-radius: 16px;
+        box-shadow: 0 5px 15px rgba(0,0,0,0.05);
+        border: 1px solid rgba(0,0,0,0.03);
+    }
+</style>
+
+<div class="container-fluid p-0">
+    <div class="row g-4 mb-4">
+        <!-- 1. DOANH THU (Tím) -->
+        <div class="col-lg-3 col-md-6 col-sm-6 col-12">
+            <div class="info-card card-order shadow-sm">
+                <div class="card-icon"><i class="fas fa-dollar-sign"></i></div>
+                <div class="card-content text-end">
+                    <div class="number">
+                        @String.Format(System.Globalization.CultureInfo.GetCultureInfo("vi-VN"), "{0:n0} đ", (decimal)ViewBag.TongDoanhThu)
+                    </div>
+                    <div class="label">Tổng Doanh thu</div>
+                </div>
+            </div>
+        </div>
+
+        <!-- 2. KHÁCH HÀNG (Xanh dương) -->
+        <div class="col-lg-3 col-md-6 col-sm-6 col-12">
+            <div class="info-card card-pending shadow-sm">
+                <div class="card-icon"><i class="fas fa-users"></i></div>
+                <div class="card-content text-end">
+                    <div class="number">@String.Format("{0:n0}", ViewBag.TongKhachHang)</div>
+                    <div class="label">Tổng Khách hàng</div>
+                </div>
+            </div>
+        </div>
+
+        <!-- 3. SẢN PHẨM (Hồng) -->
+        <div class="col-lg-3 col-md-6 col-sm-6 col-12">
+            <div class="info-card card-cancelled shadow-sm">
+                <div class="card-icon"><i class="fas fa-box"></i></div>
+                <div class="card-content text-end">
+                    <div class="number">@ViewBag.TongSanPham</div>
+                    <div class="label">Món Ăn & Đồ Uống</div>
+                </div>
+            </div>
+        </div>
+
+        <!-- 4. SỐ LƯỢNG BÁN (Xanh lá) -->
+        <div class="col-lg-3 col-md-6 col-sm-6 col-12">
+            <div class="info-card card-dispatched shadow-sm">
+                <div class="card-icon"><i class="fas fa-shopping-basket"></i></div>
+                <div class="card-content text-end">
+                    <div class="number">@String.Format("{0:n0}", ViewBag.TongSoLuongBan)</div>
+                    <div class="label">Đã Bán Ra</div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="row g-4">
+        <!-- 5. BIỂU ĐỒ DOANH SỐ HÀNG THÁNG (Line Chart) -->
+        <div class="col-lg-6 col-12">
+            <div class="chart-card p-4 h-100">
+                <div class="d-flex justify-content-between align-items-center mb-3">
+                    <h6 class="text-secondary fw-bold mb-0">DOANH THU NĂM @DateTime.Now.Year</h6>
+                    <span class="badge bg-primary bg-opacity-10 text-primary">Monthly</span>
+                </div>
+                <div style="height: 300px;">
+                    <canvas id="monthlySalesChart"></canvas>
+                </div>
+            </div>
+        </div>
+
+        <!-- 6. HOẠT ĐỘNG KHÁCH HÀNG (Line Chart) -->
+        <div class="col-lg-6 col-12">
+            <div class="chart-card p-4 h-100">
+                <div class="d-flex justify-content-between align-items-center mb-3">
+                    <h6 class="text-secondary fw-bold mb-0">KHÁCH HÀNG MUA HÀNG</h6>
+                    <span class="badge bg-info bg-opacity-10 text-info">Active Users</span>
+                </div>
+                <div style="height: 300px;">
+                    <canvas id="usersChart"></canvas>
+                </div>
+            </div>
+        </div>
+
+        <!-- 7. BIỂU ĐỒ DOANH THU 7 NGÀY GẦN NHẤT (Bar Chart - Đã chỉnh sửa) -->
+        <div class="col-lg-8 col-12">
+            <div class="chart-card p-4 h-100">
+                <h5 class="fw-bold mb-1">Doanh Thu 7 Ngày Qua</h5>
+                <p class="text-muted small mb-3">Biến động doanh thu theo giá tiền và ngày tháng</p>
+                <div style="height: 350px;">
+                    <canvas id="weeklyRevenueChart"></canvas>
+                </div>
+            </div>
+        </div>
+
+        <!-- 8. PHÂN BỐ DANH MỤC (Doughnut Chart) -->
+        <div class="col-lg-4 col-12">
+            <div class="chart-card p-4 h-100">
+                <h5 class="fw-bold mb-4">Cơ Cấu Sản Phẩm</h5>
+                <div style="height: 300px; position: relative;">
+                    <canvas id="categoryDistributionChart"></canvas>
+                </div>
+                <div class="text-center mt-3 small text-muted">
+                    *Tỉ lệ số lượng bán ra giữa các nhóm
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+    document.addEventListener('DOMContentLoaded', function () {
+        const mainColor = '#4a4aef';
+
+        // --- HÀM VẼ BIỂU ĐỒ ĐƯỜNG CHUNG ---
+        const createLineChart = (ctxId, label, data, labels, color, isMoney) => {
+            const ctx = document.getElementById(ctxId);
+            if (ctx) {
+                new Chart(ctx, {
+                    type: 'line',
+                    data: {
+                        labels: labels,
+                        datasets: [{
+                            label: label,
+                            data: data,
+                            backgroundColor: color + '1A',
+                            borderColor: color,
+                            borderWidth: 2,
+                            pointBackgroundColor: '#fff',
+                            pointBorderColor: color,
+                            pointRadius: 4,
+                            fill: true,
+                            tension: 0.4
+                        }]
+                    },
+                    options: {
+                        responsive: true,
+                        maintainAspectRatio: false,
+                        plugins: { legend: { display: false } },
+                        scales: {
+                            y: {
+                                beginAtZero: true,
+                                grid: { color: '#f0f0f0', borderDash: [5, 5] },
+                                ticks: {
+                                    callback: function(value) {
+                                        if (isMoney) {
+                                            if(value >= 1000000) return (value/1000000) + 'M';
+                                            if(value >= 1000) return (value/1000) + 'k';
+                                        }
+                                        return value;
+                                    }
+                                }
+                            },
+                            x: { grid: { display: false } }
+                        }
+                    }
+                });
+            }
+        };
+
+        // 1. NHẬN DỮ LIỆU TỪ SERVER (ViewBag)
+        const monthlyData = @Html.Raw(Json.Encode(ViewBag.MonthlySalesData));
+        const monthlyLabels = @Html.Raw(Json.Encode(ViewBag.MonthlySalesLabels));
+        const userData = @Html.Raw(Json.Encode(ViewBag.UserActiveData));
+
+        // Dữ liệu DOANH THU TUẦN
+        const weeklyRevData = @Html.Raw(Json.Encode(ViewBag.WeeklyRevenueValues));
+        const weeklyRevLabels = @Html.Raw(Json.Encode(ViewBag.WeeklyRevenueLabels));
+
+        const catData = @Html.Raw(Json.Encode(ViewBag.CategoryData));
+        const catLabels = @Html.Raw(Json.Encode(ViewBag.CategoryLabels));
+
+        // 2. VẼ BIỂU ĐỒ DOANH SỐ THÁNG
+        createLineChart('monthlySalesChart', 'Doanh thu', monthlyData, monthlyLabels, '#5b3e9e', true);
+
+        // 3. VẼ BIỂU ĐỒ KHÁCH HÀNG (ACTIVE USERS)
+        createLineChart('usersChart', 'Khách mua hàng', userData, monthlyLabels, '#4a4aef', false);
+
+        // 4. VẼ BIỂU ĐỒ DOANH THU TUẦN (Bar Chart)
+        const weeklyCtx = document.getElementById('weeklyRevenueChart');
+        if (weeklyCtx) {
+            new Chart(weeklyCtx, {
+                type: 'bar', // Dùng Bar chart cho doanh thu tuần sẽ đẹp hơn
+                data: {
+                    labels: weeklyRevLabels, // X: Ngày tháng
+                    datasets: [{
+                        label: 'Doanh thu ngày',
+                        data: weeklyRevData, // Y: Giá tiền
+                        backgroundColor: '#2ecc71', // Màu xanh lá
+                        borderRadius: 6,
+                        barThickness: 30
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    plugins: { legend: { display: false } },
+                    scales: {
+                        y: {
+                            beginAtZero: true,
+                            grid: { borderDash: [5, 5] },
+                            ticks: {
+                                callback: function(val) {
+                                    if(val >= 1000000) return (val/1000000) + 'M';
+                                    return val >= 1000 ? (val/1000) + 'k' : val;
+                                }
+                            }
+                        },
+                        x: { grid: { display: false } }
+                    }
+                }
+            });
+        }
+
+        // 5. VẼ BIỂU ĐỒ TRÒN (Doughnut) - PHÂN BỐ DANH MỤC
+        const distCtx = document.getElementById('categoryDistributionChart');
+        if (distCtx) {
+            new Chart(distCtx, {
+                type: 'doughnut',
+                data: {
+                    labels: catLabels,
+                    datasets: [{
+                        data: catData,
+                        backgroundColor: ['#5b3e9e', '#ff6b81', '#2ecc71', '#4a4aef', '#f1c40f'],
+                        borderWidth: 0,
+                        hoverOffset: 10
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    plugins: {
+                        legend: { position: 'bottom', labels: { usePointStyle: true, padding: 20 } }
+                    },
+                    cutout: '70%',
+                }
+            });
+        }
+    });
+</script>

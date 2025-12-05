@@ -7,7 +7,7 @@
             </div>
             <div class="modal-body p-4">
                 <!-- Thêm action và method để submit form -->
-                @using (Html.BeginForm("AddOnSubmit", "Home", FormMethod.Post, new { enctype = "multipart/form-data" }))
+                @using (Html.BeginForm("CreateOnSubmit", "Admin", FormMethod.Post, new { enctype = "multipart/form-data" }))
                 {
                     <!-- Tên Sản Phẩm (TenSP) -->
                     <div class="mb-3">
@@ -62,10 +62,6 @@
                     <!-- Ảnh Bìa (AnhBia) -->
                     <div class="mb-4">
                         <label class="form-label fw-bold small text-muted">Tên file ảnh / URL</label>
-                        <!-- Nếu bạn lưu tên file (VD: hinh1.jpg) thì dùng input text -->
-                        @*<input type="text" name="AnhBia" id="newProdImg" class="form-control rounded-3" placeholder="Ví dụ: burger.jpg" required>*@
-
-                        <!-- LƯU Ý: Nếu bạn muốn upload file thật thì đổi thành type="file" và xử lý trong Controller -->
                         <input type="file" name="fileUpload" class="form-control rounded-3">
                     </div>
 

@@ -1,0 +1,57 @@
+﻿@model IEnumerable<BanDoAn.tblChiTietHoaDon>
+@using System.Globalization
+
+@if (Model != null && Model.Any())
+{
+    <div class="table-responsive">
+        <table class="table align-middle mb-0">
+            <thead class="bg-light text-secondary small text-uppercase">
+                <tr>
+                    <th>Sản phẩm</th>
+                    <th class="text-center">Số lượng</th>
+                    <th class="text-end">Đơn giá</th>
+                    <th class="text-end">Thành tiền</th>
+                </tr>
+            </thead>
+            <tbody>
+                @foreach (var item in Model)
+                {
+                    <tr>
+                        <td>
+                            <div class="d-flex align-items-center">
+                                <img src="@Url.Content("~/Content/images/" + item.tblSanPham.AnhBia)"
+                                     class="rounded me-3 border" width="40" height="40" style="object-fit:cover"
+                                     onerror="this.src='https://placehold.co/40x40?text=Img'">
+                                <div>
+                                    <div class="fw-bold text-dark small">@item.tblSanPham.TenSP</div>
+                                </div>
+                            </div>
+                        </td>
+                        <td class="text-center fw-bold text-secondary">x @item.SoLuong</td>
+                        <td class="text-end text-muted small">
+                            @String.Format(CultureInfo.GetCultureInfo("vi-VN"), "{0:N0}", item.GiaBan)
+                        </td>
+                        <td class="text-end fw-bold text-primary">
+                            @String.Format(CultureInfo.GetCultureInfo("vi-VN"), "{0:N0}", item.SoLuong * item.GiaBan)
+                        </td>
+                    </tr>
+                }
+            </tbody>
+            <tfoot class="border-top">
+                <tr>
+                    <td colspan="3" class="text-end fw-bold text-dark pt-3">TỔNG CỘNG:</td>
+                    <td class="text-end fw-bold text-danger fs-6 pt-3">
+                        @String.Format(CultureInfo.GetCultureInfo("vi-VN"), "{0:N0} đ", Model.Sum(x => x.SoLuong * x.GiaBan))
+                    </td>
+                </tr>
+            </tfoot>
+        </table>
+    </div>
+}
+else
+{
+    <div class="text-center py-4 text-muted">
+        <i class="fas fa-box-open fa-2x mb-2"></i>
+        <p>Không tìm thấy sản phẩm nào trong đơn hàng này.</p>
+    </div>
+}

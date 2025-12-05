@@ -109,6 +109,7 @@ namespace BanDoAn.Controllers
             TempData["LoaiThongBao"] = "success";
 
             Session["User"] = null;
+            Session["Cart"] = null;
             return RedirectToAction("Index", "Home");
         }
     }

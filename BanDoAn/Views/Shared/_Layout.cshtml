@@ -645,17 +645,12 @@
                     {
                         if (user.makh != null)
                         {
-                            <li class="nav-item"><a class="nav-link" href="@Url.Action("LSDonHang", "Home")">Lịch sử đơn hàng</a></li>
+                            <li class="nav-item"><a class="nav-link" href="@Url.Action("LSDonHang", "KhachHang")">Lịch sử đơn hàng</a></li>
                         }
                         else
                         {
                             <li class="dropdown nav-item">
-                                <a href="#" class="nav-link dropdown-toggle" data-bs-toggle="dropdown">Quản trị</a>
-                                <ul class="dropdown-menu">
-                                    <li><a class="dropdown-item" href="@Url.Action("QLThucDon", "Home")">Quản lý thực đơn</a></li>
-                                    <li><a class="dropdown-item" href="@Url.Action("QLDonHang", "Home")">Quản lý đơn hàng</a></li>
-                                    <li><a class="dropdown-item" href="@Url.Action("ThongKe", "Home")">Thống kê doanh thu</a></li>
-                                </ul>
+                                <a class="nav-link" href="@Url.Action("QuanTri", "Admin")">Quản trị</a>
                             </li>
                         }
                     }

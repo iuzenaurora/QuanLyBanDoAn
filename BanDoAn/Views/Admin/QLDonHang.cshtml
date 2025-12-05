@@ -1,0 +1,186 @@
+﻿@model IEnumerable<BanDoAn.tblHoaDon>
+@using System.Globalization
+@{
+    ViewBag.Title = "Quản Lý Đơn Hàng";
+    Layout = "~/Views/Shared/_AdminLayout.cshtml"; // Đảm bảo đúng layout
+    int currentStatus = ViewBag.CurrentStatus ?? -1;
+}
+
+<!-- Header -->
+<div class="d-flex justify-content-between align-items-center mb-4">
+    <div>
+        <h4 class="fw-bold mb-1">Quản lý đơn hàng</h4>
+        <p class="text-muted small mb-0">Theo dõi trạng thái và xử lý đơn đặt hàng.</p>
+    </div>
+
+    <!-- THANH TÌM KIẾM (RADIO BUTTON) -->
+    <div class="bg-white p-2 rounded-pill shadow-sm border d-flex align-items-center">
+        <form action="@Url.Action("QLDonHang", "Admin")" method="get" class="d-flex m-0">
+            <div class="btn-group" role="group">
+                <input type="radio" class="btn-check" name="statusFilter" id="stAll" value="" @(currentStatus == -1 ? "checked" : "") onchange="this.form.submit()">
+                <label class="btn btn-sm btn-outline-secondary rounded-pill border-0 px-3 fw-bold" for="stAll">Tất cả</label>
+
+                <input type="radio" class="btn-check" name="statusFilter" id="st1" value="1" @(currentStatus == 1 ? "checked" : "") onchange="this.form.submit()">
+                <label class="btn btn-sm btn-outline-warning rounded-pill border-0 px-3 fw-bold" for="st1">Chờ xử lý</label>
+
+                <input type="radio" class="btn-check" name="statusFilter" id="st2" value="2" @(currentStatus == 2 ? "checked" : "") onchange="this.form.submit()">
+                <label class="btn btn-sm btn-outline-success rounded-pill border-0 px-3 fw-bold" for="st2">Đã giao</label>
+
+                <input type="radio" class="btn-check" name="statusFilter" id="st3" value="3" @(currentStatus == 3 ? "checked" : "") onchange="this.form.submit()">
+                <label class="btn btn-sm btn-outline-danger rounded-pill border-0 px-3 fw-bold" for="st3">Đã hủy</label>
+            </div>
+        </form>
+    </div>
+</div>
+
+<!-- Table Card -->
+<div class="card-panel p-0 overflow-hidden border-0">
+    <div class="table-responsive">
+        <table class="table table-hover align-middle mb-0">
+            <thead class="bg-light text-secondary small text-uppercase">
+                <tr>
+                    <th class="ps-4 py-3">Mã Đơn</th>
+                    <th>Khách hàng</th>
+                    <th>Ngày đặt</th>
+                    <th>Tổng tiền</th>
+                    <th>Thanh toán</th>
+                    <th>Trạng thái</th>
+                    <th class="text-end pe-4">Thao tác</th>
+                </tr>
+            </thead>
+            <tbody>
+                @if (Model != null && Model.Any())
+                {
+                    foreach (var item in Model)
+                    {
+                        <tr>
+                            <td class="ps-4 fw-bold text-primary">#@item.MaHD</td>
+                            <td>
+                                <div class="fw-bold text-dark">@(item.tblKhachHang != null ? item.tblKhachHang.TenKH : "Vãng lai")</div>
+                                <div class="small text-muted"><i class="fas fa-phone-alt me-1" style="font-size:0.7rem"></i>@(item.tblKhachHang?.SoDienThoai)</div>
+                            </td>
+                            <td>
+                                <div class="small fw-bold">@String.Format("{0:dd/MM}", item.NgayLap)</div>
+                                <div class="small text-muted">@String.Format("{0:HH:mm}", item.NgayLap)</div>
+                            </td>
+                            <td class="fw-bold">
+                                @String.Format(CultureInfo.GetCultureInfo("vi-VN"), "{0:N0}", item.TongTien)
+                            </td>
+                            <td>
+                                @if (item.DaThanhToan == true)
+                                {
+                                    <span class="badge bg-success-subtle text-success border border-success-subtle rounded-pill">Đã TT</span>
+                                }
+                                else
+                                {
+                                    <span class="badge bg-light text-muted border rounded-pill">Chưa TT</span>
+                                }
+                            </td>
+                            <td>
+                                @{
+                                    string badgeClass = item.TinhTrang == 1 ? "bg-warning-subtle text-warning" :
+                                                        (item.TinhTrang == 2 ? "bg-success-subtle text-success" : "bg-danger-subtle text-danger");
+                                    string statusText = item.TinhTrang == 1 ? "Đang chờ" :
+                                                        (item.TinhTrang == 2 ? "Hoàn tất" : "Đã hủy");
+                                }
+                                <span class="badge @badgeClass border-0 rounded-pill px-3">@statusText</span>
+                            </td>
+                            <td class="text-end pe-4">
+                                <div class="d-flex justify-content-end gap-2">
+                                    <!-- Nút Xem Chi Tiết -->
+                                    <button class="btn btn-sm btn-light border text-info shadow-sm"
+                                            onclick="viewOrderDetails(@item.MaHD)"
+                                            title="Xem sản phẩm">
+                                        <i class="fas fa-eye"></i>
+                                    </button>
+
+                                    <!-- Nút Cập Nhật -->
+                                    <button class="btn btn-sm btn-light border text-info shadow-sm"
+                                            onclick="openUpdateModal(@item.MaHD, @item.TinhTrang)">
+                                        <i class="fa-solid fa-download"></i>
+                                    </button>
+                                </div>
+                            </td>
+                        </tr>
+                    }
+                }
+                else
+                {
+                    <tr><td colspan="7" class="text-center py-5 text-muted">Không có đơn hàng nào</td></tr>
+                }
+            </tbody>
+        </table>
+    </div>
+</div>
+
+<!-- Modal Update Status -->
+<div class="modal fade" id="updateStatusModal" tabindex="-1">
+    <div class="modal-dialog modal-dialog-centered modal-sm">
+        <div class="modal-content border-0 shadow-lg rounded-4">
+            <div class="modal-header border-0 pb-0">
+                <h6 class="modal-title fw-bold">Cập nhật #<span id="displayMaHD"></span></h6>
+                <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+            </div>
+            <form action="@Url.Action("UpdateOrderStatus", "Admin")" method="post">
+                <div class="modal-body pt-2">
+                    <input type="hidden" name="MaHD" id="modalMaHD" />
+                    <label class="small text-muted mb-2">Chọn trạng thái mới:</label>
+                    <select class="form-select mb-3" name="TinhTrang" id="modalTinhTrang">
+                        <option value="1">⏳ Đang chờ xử lý</option>
+                        <option value="2">✅ Đã giao hàng</option>
+                        <option value="3">❌ Hủy đơn hàng</option>
+                    </select>
+                    <button type="submit" class="btn btn-primary w-100 rounded-pill fw-bold">Lưu thay đổi</button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+
+<!-- MỚI: Modal Xem Chi Tiết Đơn Hàng -->
+<div class="modal fade" id="orderDetailModal" tabindex="-1">
+    <div class="modal-dialog modal-dialog-centered">
+        <div class="modal-content border-0 shadow-lg rounded-4">
+            <div class="modal-header border-0 pb-0">
+                <h6 class="modal-title fw-bold text-primary">Chi tiết đơn hàng #<span id="detailMaHD"></span></h6>
+                <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+            </div>
+            <div class="modal-body p-4 pt-2" id="orderDetailContent">
+                <div class="text-center py-3">
+                    <div class="spinner-border text-primary" role="status">
+                        <span class="visually-hidden">Loading...</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+<script>
+    // Hàm mở modal cập nhật trạng thái (Cũ)
+    function openUpdateModal(maHD, tinhTrangHienTai) {
+        document.getElementById('modalMaHD').value = maHD;
+        document.getElementById('displayMaHD').innerText = maHD;
+        document.getElementById('modalTinhTrang').value = tinhTrangHienTai;
+        var myModal = new bootstrap.Modal(document.getElementById('updateStatusModal'));
+        myModal.show();
+    }
+
+    // Hàm mở modal xem chi tiết (Mới)
+    function viewOrderDetails(maHD) {
+        // Cập nhật tiêu đề modal
+        $('#detailMaHD').text(maHD);
+
+        // Hiện modal trước
+        var detailModal = new bootstrap.Modal(document.getElementById('orderDetailModal'));
+        detailModal.show();
+
+        // Load nội dung từ Controller
+        $('#orderDetailContent').load('/Admin/GetOrderDetails/' + maHD, function (response, status, xhr) {
+            if (status == "error") {
+                $('#orderDetailContent').html('<div class="text-center text-danger py-3">Không thể tải dữ liệu. Vui lòng thử lại.</div>');
+            }
+        });
+    }
+</script>

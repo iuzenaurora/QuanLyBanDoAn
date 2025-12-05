@@ -1,0 +1,247 @@
+﻿<!DOCTYPE html>
+<html lang="vi">
+<head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Quản trị hệ thống - FoodStore</title>
+
+    <!-- Bootstrap 5 CSS -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <!-- Font Awesome Icons -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <!-- Google Fonts -->
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+    <!-- Chart.js -->
+    <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.3/dist/chart.umd.min.js"></script>
+
+    <style>
+        :root {
+            --sidebar-bg: #fff;
+            --sidebar-active-bg: #fff2f2;
+            --sidebar-icon-color: #ff6b6b;
+            --sidebar-icon-active: #ee5253;
+            --page-bg: #f2f4f7;
+            --box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
+        }
+
+        body {
+            font-family: 'Inter', sans-serif;
+            background-color: var(--page-bg);
+            min-height: 100vh;
+            display: flex;
+            margin: 0;
+            padding: 0;
+        }
+
+        /* --- SIDEBAR STYLE --- */
+        .admin-sidebar {
+            position: fixed;
+            top: 0;
+            left: 0;
+            bottom: 0;
+            width: 80px;
+            background-color: var(--sidebar-bg);
+            box-shadow: var(--box-shadow);
+            z-index: 1030;
+            padding: 1.5rem 0;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+        }
+
+        .sidebar-logo {
+            width: 45px;
+            height: 45px;
+            border-radius: 12px;
+            background-color: var(--sidebar-icon-active);
+            color: white;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: 800;
+            font-size: 1.5rem;
+            margin-bottom: 2rem;
+        }
+
+        .sidebar-menu {
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+            width: 100%;
+            padding: 0 10px;
+        }
+
+            .sidebar-menu a {
+                display: flex;
+                justify-content: center;
+                align-items: center;
+                width: 100%;
+                height: 50px;
+                color: var(--sidebar-icon-color);
+                border-radius: 12px;
+                transition: all 0.3s;
+                font-size: 1.2rem;
+            }
+
+                .sidebar-menu a:hover {
+                    background-color: var(--sidebar-active-bg);
+                    color: var(--sidebar-icon-active);
+                }
+
+                .sidebar-menu a.active {
+                    background-color: var(--sidebar-active-bg);
+                    color: var(--sidebar-icon-active);
+                    box-shadow: 0 0 0 4px rgba(74, 74, 239, 0.1);
+                }
+
+        .sidebar-profile {
+            margin-top: auto;
+            width: 45px;
+            height: 45px;
+        }
+
+            .sidebar-profile img {
+                width: 100%;
+                height: 100%;
+                border-radius: 50%;
+                object-fit: cover;
+                border: 2px solid #eee;
+            }
+
+        /* --- MAIN CONTENT --- */
+        .main-content {
+            margin-left: 80px;
+            padding: 2rem;
+            width: calc(100% - 80px);
+            min-height: 100vh;
+        }
+
+        /* --- RESPONSIVE --- */
+        @@media (max-width: 768px) {
+            .admin-sidebar {
+                display: none;
+            }
+
+            .main-content {
+                margin-left: 0;
+                width: 100%;
+                padding: 1rem;
+            }
+        }
+
+        /* Tiện ích */
+        .card-panel {
+            background: white;
+            border-radius: 1rem;
+            box-shadow: var(--box-shadow);
+            padding: 1.5rem;
+            margin-bottom: 1.5rem;
+        }
+    </style>
+</head>
+<body>
+    @{
+        // Xác định Controller và Action hiện tại để highlight menu
+        string currentAction = ViewContext.RouteData.Values["Action"].ToString();
+        string currentController = ViewContext.RouteData.Values["Controller"].ToString();
+    }
+
+    <!-- SIDEBAR (Desktop) -->
+    <div class="admin-sidebar d-none d-md-flex">
+        <a class="text-decoration-none" href="@Url.Action("QuanTri", "Admin")"><div class="sidebar-logo">F</div></a>
+
+        <div class="sidebar-menu">
+            <!-- Quản lý Thực đơn -->
+            <a href="@Url.Action("QLThucDon", "Admin")"
+               class="@(currentAction == "QLThucDon" ? "active" : "") text-decoration-none"
+               data-bs-toggle="tooltip" title="Quản lý món ăn">
+                <i class="fas fa-utensils"></i>
+            </a>
+
+            <!-- Quản lý Đơn hàng -->
+            <a href="@Url.Action("QLDonHang", "Admin")"
+               class="@(currentAction == "QLDonHang" ? "active" : "") text-decoration-none"
+               data-bs-toggle="tooltip" title="Đơn hàng">
+                <i class="fas fa-receipt"></i>
+            </a>
+
+            <!-- Thống kê -->
+            <a href="@Url.Action("ThongKe", "Admin")"
+               class="@(currentAction == "ThongKe" ? "active" : "") text-decoration-none"
+               data-bs-toggle="tooltip" title="Thống kê doanh thu">
+                <i class="fas fa-chart-pie"></i>
+            </a>
+        </div>
+
+        <div class="sidebar-profile">
+            <a href="@Url.Action("Index", "Home")" data-bs-toggle="tooltip" title="Về trang chủ bán hàng">
+                <img src="https://www.shutterstock.com/image-vector/exit-logout-icon-260nw-755619094.jpg" alt="Out">
+            </a>
+        </div>
+    </div>
+
+    <!-- MAIN CONTENT -->
+    <div class="main-content">
+        <!-- Header Mobile -->
+        <div class="d-md-none d-flex justify-content-between align-items-center mb-4 bg-white p-3 rounded shadow-sm">
+            <span class="fw-bold text-primary">FoodStore Admin</span>
+            <button class="btn btn-light btn-sm" type="button" data-bs-toggle="offcanvas" data-bs-target="#mobileMenu">
+                <i class="fas fa-bars"></i>
+            </button>
+        </div>
+
+        <!-- Thông báo Flash Message -->
+        @if (TempData["ThongBao"] != null)
+        {
+            var loaiTB = TempData["LoaiThongBao"] as string;
+            var alertClass = loaiTB == "success" ? "alert-success" : (loaiTB == "error" ? "alert-danger" : "alert-warning");
+            var icon = loaiTB == "success" ? "check-circle" : (loaiTB == "error" ? "times-circle" : "exclamation-circle");
+
+            <div class="alert @alertClass alert-dismissible fade show shadow-sm border-0 mb-4" role="alert">
+                <i class="fas fa-@icon me-2"></i> @TempData["ThongBao"]
+                <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+            </div>
+        }
+
+        <!-- Render View Con -->
+        @RenderBody()
+    </div>
+
+    <!-- Offcanvas Mobile Menu -->
+    <div class="offcanvas offcanvas-start bg-white" tabindex="-1" id="mobileMenu">
+        <div class="offcanvas-header border-bottom">
+            <h5 class="offcanvas-title fw-bold text-primary">Menu Quản Trị</h5>
+            <button type="button" class="btn-close text-reset" data-bs-dismiss="offcanvas"></button>
+        </div>
+        <div class="offcanvas-body p-0">
+            <div class="list-group list-group-flush">
+                <a href="@Url.Action("QuanTri", "Admin")" class="list-group-item list-group-item-action py-3 @(currentAction == "QuanTri" ? "bg-light text-primary fw-bold" : "")">
+                    <i class="fas fa-home me-3 width-20"></i>Tổng quan
+                </a>
+                <a href="@Url.Action("QLThucDon", "Admin")" class="list-group-item list-group-item-action py-3 @(currentAction == "QLThucDon" ? "bg-light text-primary fw-bold" : "")">
+                    <i class="fas fa-utensils me-3 width-20"></i>Quản lý Món ăn
+                </a>
+                <a href="@Url.Action("QLDonHang", "Admin")" class="list-group-item list-group-item-action py-3 @(currentAction == "QLDonHang" ? "bg-light text-primary fw-bold" : "")">
+                    <i class="fas fa-receipt me-3 width-20"></i>Quản lý Đơn hàng
+                </a>
+                <a href="@Url.Action("ThongKe", "Admin")" class="list-group-item list-group-item-action py-3 @(currentAction == "ThongKe" ? "bg-light text-primary fw-bold" : "")">
+                    <i class="fas fa-chart-pie me-3 width-20"></i>Thống kê
+                </a>
+                <a href="@Url.Action("Index", "Home")" class="list-group-item list-group-item-action py-3 text-danger">
+                    <i class="fas fa-sign-out-alt me-3 width-20"></i>Thoát về Trang chủ
+                </a>
+            </div>
+        </div>
+    </div>
+
+    <!-- Bootstrap JS -->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+    <script>
+        // Init Tooltips
+        var tooltipTriggerList = [].slice.call(document.querySelectorAll('[data-bs-toggle="tooltip"]'))
+        var tooltipList = tooltipTriggerList.map(function (tooltipTriggerEl) {
+            return new bootstrap.Tooltip(tooltipTriggerEl)
+        })
+    </script>
+</body>
+</html>

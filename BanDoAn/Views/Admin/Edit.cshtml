@@ -1,7 +1,7 @@
 ﻿@model BanDoAn.tblSanPham
 
 <!-- Form trỏ đến Action EditOnSubmit -->
-@using (Html.BeginForm("EditOnSubmit", "Home", FormMethod.Post, new { enctype = "multipart/form-data", id = "editForm" }))
+@using (Html.BeginForm("EditOnSubmit", "Admin", FormMethod.Post, new { enctype = "multipart/form-data", id = "editForm" }))
 {
     <!-- INPUT ẨN: Chứa MaSP để biết đang sửa món nào -->
     <input type="hidden" name="MaSP" id="editMaSP" value="@Model.MaSP" />
