@@ -23,9 +23,12 @@ namespace BanDoAn
         public int MaDM { get; set; }
         public string TenDM { get; set; }
         public Nullable<int> MaLoai { get; set; }
-    
+
+        [Newtonsoft.Json.JsonIgnore]
         public virtual tblLoaiSP tblLoaiSP { get; set; }
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
+
+        [Newtonsoft.Json.JsonIgnore]
         public virtual ICollection<tblSanPham> tblSanPham { get; set; }
     }
 }

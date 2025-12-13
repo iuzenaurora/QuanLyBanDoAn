@@ -27,11 +27,16 @@ namespace BanDoAn
         public Nullable<decimal> GiaBan { get; set; }
         public string MoTa { get; set; }
         public string AnhBia { get; set; }
-    
+
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
+        [Newtonsoft.Json.JsonIgnore]
         public virtual ICollection<tblChiTietHoaDon> tblChiTietHoaDon { get; set; }
+
+        [Newtonsoft.Json.JsonIgnore]
         public virtual tblDanhMucCon tblDanhMucCon { get; set; }
+
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
+        [Newtonsoft.Json.JsonIgnore]
         public virtual ICollection<tblHinhAnh> tblHinhAnh { get; set; }
     }
 }

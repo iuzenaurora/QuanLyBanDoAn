@@ -30,9 +30,13 @@ namespace BanDoAn
         public Nullable<bool> DaThanhToan { get; set; }
     
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
+        [Newtonsoft.Json.JsonIgnore]
         public virtual ICollection<tblChiTietHoaDon> tblChiTietHoaDon { get; set; }
+        [Newtonsoft.Json.JsonIgnore]
         public virtual tblKhachHang tblKhachHang { get; set; }
+        [Newtonsoft.Json.JsonIgnore]
         public virtual tblNhanVien tblNhanVien { get; set; }
+        [Newtonsoft.Json.JsonIgnore]
         public virtual tblTinhTrang tblTinhTrang { get; set; }
     }
 }

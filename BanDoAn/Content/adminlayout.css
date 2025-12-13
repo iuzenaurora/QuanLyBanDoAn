@@ -1,0 +1,122 @@
+﻿:root {
+    --sidebar-bg: #fff;
+    --sidebar-active-bg: #fff2f2;
+    --sidebar-icon-color: #ff6b6b;
+    --sidebar-icon-active: #ee5253;
+    --page-bg: #f2f4f7;
+    --box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
+}
+
+body {
+    font-family: 'Inter', sans-serif;
+    background-color: var(--page-bg);
+    min-height: 100vh;
+    display: flex;
+    margin: 0;
+    padding: 0;
+}
+
+/* --- SIDEBAR STYLE --- */
+.admin-sidebar {
+    position: fixed;
+    top: 0;
+    left: 0;
+    bottom: 0;
+    width: 80px;
+    background-color: var(--sidebar-bg);
+    box-shadow: var(--box-shadow);
+    z-index: 1030;
+    padding: 1.5rem 0;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+}
+
+.sidebar-logo {
+    width: 45px;
+    height: 45px;
+    border-radius: 12px;
+    background-color: var(--sidebar-icon-active);
+    color: white;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-weight: 800;
+    font-size: 1.5rem;
+    margin-bottom: 2rem;
+}
+
+.sidebar-menu {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+    width: 100%;
+    padding: 0 10px;
+}
+
+    .sidebar-menu a {
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        width: 100%;
+        height: 50px;
+        color: var(--sidebar-icon-color);
+        border-radius: 12px;
+        transition: all 0.3s;
+        font-size: 1.2rem;
+    }
+
+        .sidebar-menu a:hover {
+            background-color: var(--sidebar-active-bg);
+            color: var(--sidebar-icon-active);
+        }
+
+        .sidebar-menu a.active {
+            background-color: var(--sidebar-active-bg);
+            color: var(--sidebar-icon-active);
+            box-shadow: 0 0 0 4px rgba(74, 74, 239, 0.1);
+        }
+
+.sidebar-profile {
+    margin-top: auto;
+    width: 45px;
+    height: 45px;
+}
+
+    .sidebar-profile img {
+        width: 100%;
+        height: 100%;
+        border-radius: 50%;
+        object-fit: cover;
+        border: 2px solid #eee;
+    }
+
+/* --- MAIN CONTENT --- */
+.main-content {
+    margin-left: 80px;
+    padding: 2rem;
+    width: calc(100% - 80px);
+    min-height: 100vh;
+}
+
+/* --- RESPONSIVE --- */
+@media (max-width: 768px) {
+    .admin-sidebar {
+        display: none;
+    }
+
+    .main-content {
+        margin-left: 0;
+        width: 100%;
+        padding: 1rem;
+    }
+}
+
+/* Tiện ích */
+.card-panel {
+    background: white;
+    border-radius: 1rem;
+    box-shadow: var(--box-shadow);
+    padding: 1.5rem;
+    margin-bottom: 1.5rem;
+}
